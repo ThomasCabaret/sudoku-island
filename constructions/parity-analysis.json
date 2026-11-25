@@ -23,6 +23,25 @@
   },
   "two_cell_subsets_checked": 3240,
   "orienting_pairs_for_reference": 378,
+  "even_only_orienting_pairs": 116,
+  "minimum_even_only_marks": 2,
+  "even_only_example": [
+    {
+      "cell": [
+        1,
+        4
+      ],
+      "kind": "even"
+    },
+    {
+      "cell": [
+        9,
+        9
+      ],
+      "kind": "even"
+    }
+  ],
+  "even_only_example_survivors": 1,
   "example": [
     {
       "cell": [

@@ -345,7 +345,9 @@ def puzzle_json(lines: Sequence[Line], title: str, *, parity: Sequence[ParityMar
             item["difference"] = line.difference
     if parity:
         result["parity"] = [{"cell": [mark.cell // 9 + 1, mark.cell % 9 + 1], "kind": "even" if mark.even else "odd"} for mark in parity]
-        result["rules"].append("Blue squares contain even digits; blue circles contain odd digits.")
+        result["rules"].append("Blue squares contain even digits." if all(m.even for m in parity) else
+                               "Blue circles contain odd digits." if all(not m.even for m in parity) else
+                               "Blue squares contain even digits; blue circles contain odd digits.")
     return result
 
 

@@ -32,7 +32,7 @@ either end of any thermometer gives multiple solutions. This establishes
 local irreducibility; it does not prove a global minimum clue count.
 Human difficulty and a satisfying manual solve path still need playtesting.
 
-Two more proposals are now in the [landscape construction catalogue](constructions/README.md):
+Three more proposals are now in the [landscape construction catalogue](constructions/README.md):
 
 - [Two Anchors](constructions/even_island_02/puzzle.png): two essential parity
   marks and four short thermometers, using 20 marked cells. Two is the proven
@@ -40,6 +40,11 @@ Two more proposals are now in the [landscape construction catalogue](constructio
 - [Whispered Island](constructions/even_island_03/puzzle.png): two German whisper
   lines and a two-cell thermometer, using 24 marked cells. The whispers leave
   exactly two complementary solutions; the thermometer selects one.
+- [Two Even Anchors](constructions/even_island_04/puzzle.png): two even squares
+  fix all parities, then four four-cell thermometers fix the digits. It uses
+  18 marked cells. A checked certificate rules out three short thermometers
+  for this particular filling, even with the entire parity mask supplied.
+  The global three-thermometer goal remains open for other digit fillings.
 
 All cards are standalone English landscape PNGs rendered from SVG: grid on
 the left, title and rules on the right. Every statement uses "orthogonally

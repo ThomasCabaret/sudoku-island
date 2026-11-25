@@ -11,13 +11,14 @@ directory. Future proposals can be added without overwriting earlier designs.
 | 01 - Even Island | Four thermometers, 19 marked cells | [PNG](even_island_01/puzzle.png), [SVG](even_island_01/puzzle.svg), [PDF](even_island_01/puzzle.pdf) | [PNG](even_island_01/solution.png), [SVG](even_island_01/solution.svg), [JSON](even_island_01/solution.json) |
 | 02 - Two Anchors | Two parity marks, four short thermometers, 20 marked cells | [PNG](even_island_02/puzzle.png), [SVG](even_island_02/puzzle.svg), [PDF](even_island_02/puzzle.pdf) | [PNG](even_island_02/solution.png), [SVG](even_island_02/solution.svg), [JSON](even_island_02/solution.json) |
 | 03 - Whispered Island | Two German whispers and one two-cell thermometer, 24 marked cells | [PNG](even_island_03/puzzle.png), [SVG](even_island_03/puzzle.svg), [PDF](even_island_03/puzzle.pdf) | [PNG](even_island_03/solution.png), [SVG](even_island_03/solution.svg), [JSON](even_island_03/solution.json) |
+| 04 - Two Even Anchors | Two even squares, four four-cell thermometers, 18 marked cells | [PNG](even_island_04/puzzle.png), [SVG](even_island_04/puzzle.svg), [PDF](even_island_04/puzzle.pdf) | [PNG](even_island_04/solution.png), [SVG](even_island_04/solution.svg), [JSON](even_island_04/solution.json) |
 
 ![Even Island - standalone puzzle](even_island_01/puzzle.png)
 
 The PNG is a complete statement: it includes the Sudoku rules, thermometer
 rules, the "orthogonally connected" even-island rule, and the distinction between
-diagonal line segments and side adjacency. All three proposals have no given
-digits. Proposal 02 deliberately includes two blue parity marks. Each solution
+diagonal line segments and side adjacency. All proposals have no given
+digits. Proposals 02 and 04 include two blue parity marks. Each solution
 is on a separately labeled card.
 
 Each PNG is **3840 x 2400 pixels**, rendered at 3x scale directly from its SVG.
@@ -46,6 +47,7 @@ line count alone can make a puzzle less interesting.
 | 01 | 4 | 0 | 19 | 15 | 11 | Thermometers |
 | 02 | 4 | 2 | 20 | 14 | 9 | Parity, thermometers |
 | 03 | 3 | 0 | 24 | 21 | 14 | Thermometers, German whispers |
+| 04 | 4 | 2 | 18 | 12 | 5 | Even squares, thermometers |
 
 These alternatives trade different costs. Proposal 01 uses one familiar clue
 family and the least marked area. Proposal 02 makes the geometry-vs-digits
@@ -96,6 +98,57 @@ distinguish that pair; one suffices for these fixed whispers. This is a
 conditional minimum, not a proof that all possible two-line puzzles fail.
 German whisper neighbors differ by at least 5; no negative constraint applies
 off the lines. No givens or parity marks appear in this proposal.
+
+### Two Even Anchors: all parities fixed before digit construction
+
+Proposal 04 marks **r1c4 and r9c9 as even**. Those two squares alone fix the
+entire parity geometry, with no odd mark. Digit construction then works with
+all 81 parities already determined. The final verifier independently checks
+all eight masks using only the actual printed clues and the connectivity rule.
+
+The verified result uses **four thermometers of four cells**, no overlaps or
+crossings, and 18 marked cells including the two squares. Every mark, line and
+endpoint is essential; legal interior thermometer shortcuts are also excluded.
+The island rule remains essential. This improves marked area and path length
+over proposal 02, but **does not meet the requested three-thermometer cap**.
+
+For this particular completed grid, **four is the minimum number of standard
+noncrossing king-adjacent thermometers of at most four cells**. The
+[short-bound certificate](even_island_04/short-bound.json) proves that three
+cannot isolate this filling even when all parities are supplied and different
+thermometers may share cells or cross each other. A thermometer itself is a
+simple, noncrossing path. This is a fixed-filling lower bound, not a proof
+that a different Sudoku filling cannot achieve three.
+
+The certificate contains 30 independently valid alternative Sudokus sharing
+the full parity pattern. Twenty-four of them are not global digit relabelings.
+For every possible increasing path of two, three or four cells in the target,
+we record which alternatives it rejects. No choice of three paths rejects
+them all. This necessary hitting-set condition already rules out uniqueness.
+The certificate checker reconstructs every path, checks every witness with
+the whole-grid validator, and uses the separate generic exact cover search.
+It does not trust a timeout or a search log as an impossibility certificate.
+
+Exploration also rejected all 2,880 parity-preserving digit relabelings of
+each of the proposal 01 and proposal 02 fillings, plus 300 varied sampled
+completions, under the three-by-four profile. See [research.json](even_island_04/research.json).
+These are selected structural filling classes, not the whole 318-billion-grid
+space. The global existence of a three-by-four construction remains open.
+
+```sh
+python -m constructions.short_thermos --check-certificate constructions/even_island_04/short-bound.json
+python -m constructions.short_thermos --target constructions/even_island_04/solution.json --max-lines 3 --max-length 4 --allow-overlap --certificate output/short-bound.json --output output/strict.json
+python -m constructions.short_thermos --target constructions/even_island_04/solution.json --max-lines 4 --max-length 4 --seconds-per-target 90 --allow-overlap --output output/four-short.json
+python -m constructions.short_thermos --max-lines 3 --max-length 4 --targets 300 --seed 400 --allow-overlap --output output/short-candidate.json
+python -m constructions.short_thermos --relabel-from constructions/even_island_04/solution.json --targets 2880 --allow-overlap --output output/relabel-candidate.json
+```
+
+The tool seeds its counterexamples with valid bichromatic-component (Kempe)
+swaps, eliminating many impossible target/clue combinations before querying
+the full Sudoku solver. Random completions vary variable order as well as
+digit labels; they are reproducible samples, not claimed uniform samples.
+`NO_COVER_IN_POOL` is local to its target and path bounds; `UNKNOWN` means a
+budget ran out. Negative outcomes are never published as unique puzzles.
 
 ## Check and rebuild the cards
 
@@ -183,6 +236,7 @@ constructions/
   search.py                 Bounded thermometer/whisper/renban construction search
   parity.py                 Exhaustive minimum-orientation-mark analysis
   parity-analysis.json      Recorded two-mark minimum and example
+  short_thermos.py           Fixed-geometry construction and lower-bound checker
   build.py                  SVG, PNG, PDF and solution generation/checking
   even_island_01/
     puzzle.json             Complete machine-readable statement
@@ -195,4 +249,5 @@ constructions/
     verification.json       Recorded counts, witnesses and removal audits
   even_island_02/            Same files for Two Anchors
   even_island_03/            Same files for Whispered Island
+  even_island_04/            Same files, plus short-bound.json and research.json
 ```

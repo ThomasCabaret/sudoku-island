@@ -1,0 +1,56 @@
+{
+  "requested_profile": {
+    "even_marks": 2,
+    "max_lines": 3,
+    "max_length": 4
+  },
+  "published_profile": {
+    "even_marks": 2,
+    "line_lengths": [
+      4,
+      4,
+      4,
+      4
+    ]
+  },
+  "qualification": "The requested three-line profile has not been achieved or globally ruled out. Four is certified minimal for this target filling under the recorded path convention.",
+  "fixed_target_certificate": "short-bound.json",
+  "certificate_witnesses": 30,
+  "structural_witnesses_not_global_relabelings": 24,
+  "relabeling_searches": [
+    {
+      "base_solution": "../even_island_01/solution.json",
+      "targets_checked": 2880,
+      "status_counts": {
+        "NO_COVER_IN_POOL": 2880
+      },
+      "max_lines": 3,
+      "max_length": 4,
+      "overlap_allowed": true
+    },
+    {
+      "base_solution": "../even_island_02/solution.json",
+      "targets_checked": 2880,
+      "status_counts": {
+        "NO_COVER_IN_POOL": 2880
+      },
+      "max_lines": 3,
+      "max_length": 4,
+      "overlap_allowed": true
+    }
+  ],
+  "sampled_search": {
+    "seed_range": [
+      400,
+      699
+    ],
+    "targets_checked": 300,
+    "status_counts": {
+      "NO_COVER_IN_POOL": 300
+    },
+    "uniform_sample": false,
+    "max_lines": 3,
+    "max_length": 4,
+    "overlap_allowed": true
+  }
+}

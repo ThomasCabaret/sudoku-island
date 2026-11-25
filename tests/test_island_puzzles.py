@@ -17,6 +17,10 @@ from sudoku_island import symmetry_orbit
 from constructions.build import build, check_png
 from constructions.search import _cover, construct, reduce_lines
 from constructions.parity import analyze as analyze_parity, survivors
+from constructions.short_thermos import (
+    check_failure_certificate, cover_without_geometry, kempe_alternatives,
+    sample_grid,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -157,6 +161,50 @@ class PuzzleTests(unittest.TestCase):
 
 
 class ConstructionTests(unittest.TestCase):
+    def test_short_cover_reduction_against_brute_force(self):
+        rng = random.Random(723)
+        for _ in range(90):
+            requirements = [rng.randrange(1, 32) for _ in range(rng.randrange(1, 7))]
+            budget = rng.randrange(1, 4)
+            possible = [mask for mask in range(32) if mask.bit_count() <= budget
+                        and all(mask & req for req in requirements)]
+            result = cover_without_geometry(requirements, [2, 3, 4, 3, 4], budget, lambda: None)
+            self.assertEqual(result is not None, bool(possible))
+            if result is not None:
+                self.assertIn(sum(1 << i for i in result), possible)
+
+    def test_sample_and_kempe_witnesses_are_valid_and_preserve_all_parities(self):
+        grid = sample_grid(18)
+        self.assertEqual(grid, sample_grid(18))
+        self.assertTrue(validate_solution(grid, ()))
+        digits = tuple(d for row in grid for d in row)
+        for alternative in kempe_alternatives(grid):
+            self.assertNotEqual(alternative, digits)
+            self.assertTrue(all(a % 2 == b % 2 for a, b in zip(digits, alternative)))
+            rows = tuple(tuple(alternative[r * 9:r * 9 + 9]) for r in range(9))
+            self.assertTrue(validate_solution(rows, ()))
+
+    def test_fourth_proposal_even_marks_and_short_bound(self):
+        proposal = ROOT / "constructions" / "even_island_04"
+        data, lines = load_puzzle(proposal / "puzzle.json")
+        marks = load_parity(data)
+        self.assertEqual(len(marks), 2)
+        self.assertTrue(all(mark.even for mark in marks))
+        self.assertEqual(len(survivors(marks)), 1)
+        self.assertEqual(len(lines), 4)
+        self.assertTrue(all(len(line.cells) == 4 for line in lines))
+        result = verify(lines, parity=marks)
+        self.assertEqual(result.status, "UNIQUE")
+        certificate = json.loads((proposal / "short-bound.json").read_text())
+        self.assertEqual(certificate["target"], "".join(str(d) for row in result.solutions[0] for d in row))
+        self.assertTrue(check_failure_certificate(certificate))
+        self.assertEqual(certificate["max_lines"], 3)
+        self.assertEqual(certificate["max_length"], 4)
+        self.assertFalse(certificate["disjoint"])
+        invalid = dict(certificate, witnesses=[])
+        with self.assertRaises(ValueError):
+            check_failure_certificate(invalid)
+
     def test_minimum_parity_marks_and_complete_puzzle_necessity(self):
         report = analyze_parity()
         self.assertEqual(report["minimum_marks"], 2)

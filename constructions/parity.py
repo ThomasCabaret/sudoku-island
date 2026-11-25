@@ -28,6 +28,7 @@ def analyze() -> dict:
     histogram = Counter(len(survivors((mark,))) for mark in singles)
     pairs = orienting_pairs()
     example = (ParityMark(0, True), ParityMark(71, False))
+    even_example = (ParityMark(3, True), ParityMark(80, True))
     return {
         "scope": "Orienting the eight proven parity masks, before any line or digit clues.",
         "reference_pattern": REFERENCE_PATTERN,
@@ -36,6 +37,10 @@ def analyze() -> dict:
         "single_mark_survivor_histogram": dict(sorted(histogram.items())),
         "two_cell_subsets_checked": 3240,
         "orienting_pairs_for_reference": len(pairs),
+        "even_only_orienting_pairs": sum(all(mark.even for mark in pair) for pair in pairs),
+        "minimum_even_only_marks": 1 if histogram.get(1, 0) else 2 if any(all(m.even for m in pair) for pair in pairs) else None,
+        "even_only_example": [{"cell": [m.cell // 9 + 1, m.cell % 9 + 1], "kind": "even"} for m in even_example],
+        "even_only_example_survivors": len(survivors(even_example)),
         "example": [{"cell": [m.cell // 9 + 1, m.cell % 9 + 1], "kind": "even" if m.even else "odd"} for m in example],
         "example_survivors": len(survivors(example)),
         "example_after_removing_each_mark": [len(survivors(example[:i] + example[i + 1:])) for i in range(2)],

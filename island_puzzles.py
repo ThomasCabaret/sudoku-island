@@ -458,7 +458,12 @@ def render_svg(
     rules = ["Place the digits 1-9 once in each row, each column and each 3x3 box.",
              "All cells containing an even digit (2, 4, 6 or 8) must be orthogonally connected."]
     if parity:
-        rules.append("A blue square contains an even digit. A blue circle contains an odd digit.")
+        if all(mark.even for mark in parity):
+            rules.append("Blue squares contain even digits.")
+        elif all(not mark.even for mark in parity):
+            rules.append("Blue circles contain odd digits.")
+        else:
+            rules.append("A blue square contains an even digit. A blue circle contains an odd digit.")
     if any(line.kind == "thermometer" for line in lines):
         rules.append("Digits strictly increase along each grey thermometer, from its bulb to its tip.")
     if any(line.kind == "whisper" for line in lines):
