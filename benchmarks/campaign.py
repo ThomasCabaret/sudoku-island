@@ -63,10 +63,15 @@ def pid_alive(pid: int | None) -> bool:
         kernel.CloseHandle.argtypes = [wintypes.HANDLE]
         handle = kernel.OpenProcess(0x1000, False, pid)
         if not handle:
-            return False
+            # A restricted observer can be denied access to a live process.
+            # Windows reports ERROR_INVALID_PARAMETER for a nonexistent PID;
+            # ERROR_ACCESS_DENIED must not be mistaken for process death.
+            return ctypes.get_last_error() == 5
         code = wintypes.DWORD()
         try:
-            return bool(kernel.GetExitCodeProcess(handle, ctypes.byref(code))) and code.value == 259
+            if not kernel.GetExitCodeProcess(handle, ctypes.byref(code)):
+                return ctypes.get_last_error() == 5
+            return code.value == 259
         finally:
             kernel.CloseHandle(handle)
     try:

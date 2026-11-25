@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 from benchmarks.campaign import check_snapshot, pid_alive, prepare, read_json, render_status
 
@@ -16,6 +17,18 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class CampaignTests(unittest.TestCase):
+    def test_windows_access_denied_is_not_reported_as_a_dead_process(self):
+        kernel = mock.Mock()
+        kernel.OpenProcess.return_value = None
+        with mock.patch("benchmarks.campaign.sys.platform", "win32"), \
+             mock.patch("benchmarks.campaign.ctypes.WinDLL", return_value=kernel, create=True), \
+             mock.patch("benchmarks.campaign.ctypes.get_last_error", return_value=5, create=True):
+            self.assertTrue(pid_alive(12345))
+        with mock.patch("benchmarks.campaign.sys.platform", "win32"), \
+             mock.patch("benchmarks.campaign.ctypes.WinDLL", return_value=kernel, create=True), \
+             mock.patch("benchmarks.campaign.ctypes.get_last_error", return_value=87, create=True):
+            self.assertFalse(pid_alive(12345))
+
     def test_pid_liveness_and_frozen_statement_boundary(self):
         self.assertTrue(pid_alive(os.getpid()))
         self.assertFalse(pid_alive(None))
