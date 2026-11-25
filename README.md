@@ -21,7 +21,7 @@ automatically, and distinguishes completed searches from interrupted ones.
 The next stage is now available: [**Even Island**](constructions/even_island_01/puzzle.png),
 a Sudoku with **four thermometers, no given digits, and exactly one solution**.
 All even digits must form a side-connected island, and digits strictly
-increase along each thermometer from its bulb. The four paths use 20 distinct
+increase along each thermometer from its bulb. The four paths use 19 distinct
 cells, without overlaps or crossings.
 
 ![Even Island puzzle](constructions/even_island_01/puzzle.png)
@@ -29,8 +29,23 @@ cells, without overlaps or crossings.
 The uniqueness check considers all eight island orientations and all digit
 fillings. Removing the island rule, removing any thermometer, or trimming
 either end of any thermometer gives multiple solutions. This establishes
-local irreducibility; it does not prove that three different lines cannot work.
+local irreducibility; it does not prove a global minimum clue count.
 Human difficulty and a satisfying manual solve path still need playtesting.
+
+Two more proposals are now in the [landscape construction catalogue](constructions/README.md):
+
+- [Two Anchors](constructions/even_island_02/puzzle.png): two essential parity
+  marks and four short thermometers, using 20 marked cells. Two is the proven
+  minimum number of parity marks needed to orient the island before other clues.
+- [Whispered Island](constructions/even_island_03/puzzle.png): two German whisper
+  lines and a two-cell thermometer, using 24 marked cells. The whispers leave
+  exactly two complementary solutions; the thermometer selects one.
+
+All cards are standalone English landscape PNGs rendered from SVG: grid on
+the left, title and rules on the right. Every statement uses "orthogonally
+connected" for the even-cell rule. Each proposal has a separate solution card,
+printable PDF, and exact removal audit. The original proposal was shortened
+from 20 to 19 marked cells by removing an unnecessary interior thermometer cell.
 
 The unrestricted connected-even rule admits **318,563,942,400** filled Sudokus.
 Difference-only clues cannot remove the complementary solutions related by
@@ -45,6 +60,7 @@ python island_puzzles.py analyze
 python island_puzzles.py verify constructions/even_island_01/puzzle.json --audit
 python -m constructions.build --check
 python -m constructions.search --output output/candidate.json
+python -m constructions.parity --json output/parity-analysis.json
 ```
 
 These commands use only the Python standard library. To rebuild the SVG, PNG
@@ -225,7 +241,8 @@ runs the tests on Python 3.10, 3.12 and 3.13 and exercises the installed command
 
 - `sudoku_island.py`: exact abstract solver, independent witness checker, CLI.
 - `sudoku_completion.py`: separate digit-placement search and Sudoku checker.
-- `island_puzzles.py`: exact digit counts, thermometer/whisper verifier, SVG renderer.
+- `island_puzzles.py`: exact digit counts, parity/thermometer/whisper/renban verifier,
+  landscape SVG renderer.
 - `constructions/`: search/build tools, analysis and one folder per proposal,
   with standalone English PNG cards, SVG sources, solutions and verification.
 - `tests/`: independent small-board oracles and regression tests.

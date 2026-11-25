@@ -1,29 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="860" viewBox="0 0 720 860">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="800" viewBox="0 0 1280 800">
 <title>Even Island</title>
-<rect width="720" height="860" fill="white"/>
-<text x="360" y="38" text-anchor="middle" font-family="sans-serif" font-size="27" fill="#172433">Even Island</text>
-<text x="360" y="64" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#536170">Connected-even Sudoku</text>
-<path d="M 72 88 H 648 M 72 88 V 664" stroke="#333" stroke-width="3"/>
-<path d="M 72 152 H 648 M 136 88 V 664" stroke="#333" stroke-width="1"/>
-<path d="M 72 216 H 648 M 200 88 V 664" stroke="#333" stroke-width="1"/>
-<path d="M 72 280 H 648 M 264 88 V 664" stroke="#333" stroke-width="3"/>
-<path d="M 72 344 H 648 M 328 88 V 664" stroke="#333" stroke-width="1"/>
-<path d="M 72 408 H 648 M 392 88 V 664" stroke="#333" stroke-width="1"/>
-<path d="M 72 472 H 648 M 456 88 V 664" stroke="#333" stroke-width="3"/>
-<path d="M 72 536 H 648 M 520 88 V 664" stroke="#333" stroke-width="1"/>
-<path d="M 72 600 H 648 M 584 88 V 664" stroke="#333" stroke-width="1"/>
-<path d="M 72 664 H 648 M 648 88 V 664" stroke="#333" stroke-width="3"/>
-<polyline points="296,504 296,440 360,376 424,376" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="296" cy="504" r="18" fill="#c4ccd4"/>
-<polyline points="232,632 232,568 168,504 104,440 104,504 168,568" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="232" cy="632" r="18" fill="#c4ccd4"/>
-<polyline points="232,248 296,184 360,248 360,184 424,184 424,248" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="232" cy="248" r="18" fill="#c4ccd4"/>
-<polyline points="552,376 616,376 552,312 616,248" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="552" cy="376" r="18" fill="#c4ccd4"/>
-<text x="72" y="704" font-family="sans-serif" font-size="15" fill="#172433">Place 1-9 once in every row, column and 3x3 box.</text>
-<text x="72" y="728" font-family="sans-serif" font-size="15" fill="#172433">All cells containing 2, 4, 6 or 8 form one side-connected island.</text>
-<text x="72" y="752" font-family="sans-serif" font-size="15" fill="#172433">Digits strictly increase from each thermometer bulb to its tip.</text>
-<text x="72" y="810" font-family="sans-serif" font-size="13" fill="#536170">Thermometer segments may run diagonally.</text>
-<text x="72" y="834" font-family="sans-serif" font-size="13" fill="#536170">No given digits. Diagonal contact never joins even cells.</text>
+<rect width="1280" height="800" fill="white"/>
+<path d="M 664 96 V 736" stroke="#dce3e9" stroke-width="1"/>
+<text x="704" y="108" font-family="Helvetica" font-size="13" fill="#536170">SUDOKU / EVEN ISLAND</text>
+<text x="704" y="151" font-family="Helvetica" font-size="32" fill="#172433">Even Island</text>
+<text x="704" y="184" font-family="Helvetica" font-size="13" fill="#536170">PUZZLE / NO GIVEN DIGITS</text>
+<path d="M 48 112 H 624 M 48 112 V 688" stroke="#333" stroke-width="3"/>
+<path d="M 48 176 H 624 M 112 112 V 688" stroke="#333" stroke-width="1"/>
+<path d="M 48 240 H 624 M 176 112 V 688" stroke="#333" stroke-width="1"/>
+<path d="M 48 304 H 624 M 240 112 V 688" stroke="#333" stroke-width="3"/>
+<path d="M 48 368 H 624 M 304 112 V 688" stroke="#333" stroke-width="1"/>
+<path d="M 48 432 H 624 M 368 112 V 688" stroke="#333" stroke-width="1"/>
+<path d="M 48 496 H 624 M 432 112 V 688" stroke="#333" stroke-width="3"/>
+<path d="M 48 560 H 624 M 496 112 V 688" stroke="#333" stroke-width="1"/>
+<path d="M 48 624 H 624 M 560 112 V 688" stroke="#333" stroke-width="1"/>
+<path d="M 48 688 H 624 M 624 112 V 688" stroke="#333" stroke-width="3"/>
+<polyline points="272,528 272,464 336,400 400,400" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="272" cy="528" r="18" fill="#c4ccd4"/>
+<polyline points="208,656 208,592 144,528 80,528 144,592" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="208" cy="656" r="18" fill="#c4ccd4"/>
+<polyline points="208,272 272,208 336,272 336,208 400,208 400,272" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="208" cy="272" r="18" fill="#c4ccd4"/>
+<polyline points="528,400 592,400 528,336 592,272" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="528" cy="400" r="18" fill="#c4ccd4"/>
+<text x="704" y="228" font-family="Helvetica" font-size="14" fill="#536170">RULES</text>
+<text x="704" y="263" font-family="Helvetica" font-size="17" fill="#172433">1.</text>
+<text x="730" y="263" font-family="Helvetica" font-size="17" fill="#172433">Place the digits 1-9 once in each row, each</text>
+<text x="730" y="286" font-family="Helvetica" font-size="17" fill="#172433">column and each 3x3 box.</text>
+<text x="704" y="323" font-family="Helvetica" font-size="17" fill="#172433">2.</text>
+<text x="730" y="323" font-family="Helvetica" font-size="17" fill="#172433">All cells containing an even digit (2, 4, 6 or 8)</text>
+<text x="730" y="346" font-family="Helvetica" font-size="17" fill="#172433">must be orthogonally connected.</text>
+<text x="704" y="383" font-family="Helvetica" font-size="17" fill="#172433">3.</text>
+<text x="730" y="383" font-family="Helvetica" font-size="17" fill="#172433">Digits strictly increase along each grey</text>
+<text x="730" y="406" font-family="Helvetica" font-size="17" fill="#172433">thermometer, from its bulb to its tip.</text>
+<text x="704" y="704" font-family="Helvetica" font-size="14" fill="#536170">Line segments may connect cells diagonally.</text>
+<text x="704" y="726" font-family="Helvetica" font-size="14" fill="#536170">Even cells connect through sides, never diagonally.</text>
 </svg>

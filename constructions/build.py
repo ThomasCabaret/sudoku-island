@@ -14,7 +14,7 @@ import struct
 from typing import Sequence
 import zlib
 
-from island_puzzles import load_puzzle, render_svg, verify
+from island_puzzles import CARD_HEIGHT, CARD_WIDTH, audit, load_parity, load_puzzle, render_svg, verify
 
 
 CATALOG = Path(__file__).resolve().parent
@@ -56,7 +56,7 @@ def check_png(path: Path, svg: bytes) -> None:
             ended = end == len(data)
             break
         offset = end
-    if not ended or size != (720 * SCALE, 860 * SCALE) or digest != sha256(svg).hexdigest():
+    if not ended or size != (CARD_WIDTH * SCALE, CARD_HEIGHT * SCALE) or digest != sha256(svg).hexdigest():
         raise ValueError(f"Missing, stale or wrong-size PNG card: {path}")
 
 
@@ -72,26 +72,57 @@ def _render_files(svg_path: Path) -> None:
             svg_path.with_suffix(".png").write_bytes(png_with_source(png, svg_bytes))
             if svg_path.stem == "puzzle":
                 with fitz.open() as pdf:
-                    page = pdf.new_page(width=595.276, height=841.89)
-                    page.show_pdf_page(fitz.Rect(18, 22, 577.276, 819.89), vector, 0)
-                    pdf.set_metadata({"title": "Even Island - puzzle", "author": "Sudoku Island project"})
+                    page = pdf.new_page(width=841.89, height=595.276)
+                    page.show_pdf_page(fitz.Rect(18, 18, 823.89, 577.276), vector, 0)
+                    pdf.set_metadata({"title": svg_path.parent.name + " - puzzle", "author": "Sudoku Island project"})
                     pdf.save(svg_path.with_suffix(".pdf"), garbage=4, deflate=True)
+
+
+def _compact(value):
+    if isinstance(value, dict):
+        return {key: ["".join(str(d) for row in grid for d in row) for grid in item]
+                if key == "solutions" else _compact(item) for key, item in value.items()}
+    if isinstance(value, (tuple, list)):
+        return [_compact(item) for item in value]
+    return value
+
+
+def design_metrics(lines, parity) -> dict:
+    turns = 0
+    for line in lines:
+        directions = [(b // 9 - a // 9, b % 9 - a % 9) for a, b in zip(line.cells, line.cells[1:])]
+        turns += sum(a != b for a, b in zip(directions, directions[1:]))
+    cells = {cell for line in lines for cell in line.cells}
+    return {
+        "line_count": len(lines), "parity_mark_count": len(parity),
+        "clue_count": len(lines) + len(parity),
+        "line_cells": len(cells), "marked_cells": len(cells | {m.cell for m in parity}),
+        "segments": sum(len(line.cells) - 1 for line in lines), "turns": turns,
+        "longest_line": max((len(line.cells) for line in lines), default=0),
+        "clue_families": sorted({line.kind for line in lines} | ({"parity"} if parity else set())),
+    }
 
 
 def build(proposal: Path, *, check: bool = False) -> None:
     """Require an exact unique solution before writing any cards."""
     data, lines = load_puzzle(proposal / "puzzle.json")
-    result = verify(lines)
+    # Canonical JSON keeps this digest stable across Git's LF/CRLF conversion.
+    puzzle_digest = sha256(json.dumps(data, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+    parity = load_parity(data)
+    result = verify(lines, parity=parity)
     if result.status != "UNIQUE":
         raise ValueError(f"{proposal.name} is {result.status}; refusing to publish a unique-solution card")
     grid = result.solutions[0]
     solution = {"schema_version": 1, "puzzle": "puzzle.json", "status": "UNIQUE", "grid": grid}
     solution_bytes = (json.dumps(solution, indent=2) + "\n").encode("utf-8")
     sources = {
-        "puzzle.svg": render_svg(lines, data.get("title", "Even Island")),
-        "solution.svg": render_svg(lines, data.get("title", "Even Island"), solution=grid),
+        "puzzle.svg": render_svg(lines, data.get("title", "Even Island"), parity=parity),
+        "solution.svg": render_svg(lines, data.get("title", "Even Island"), solution=grid, parity=parity),
     }
     if check:
+        report = json.loads((proposal / "verification.json").read_text(encoding="utf-8"))
+        if report.get("puzzle_sha256") != puzzle_digest:
+            raise ValueError(f"Stale verification record: {proposal}")
         recorded = json.loads((proposal / "solution.json").read_text(encoding="utf-8"))
         if recorded != json.loads(solution_bytes):
             raise ValueError(f"Stale solution: {proposal}")
@@ -106,6 +137,19 @@ def build(proposal: Path, *, check: bool = False) -> None:
             path = proposal / name
             path.write_bytes(svg.encode("utf-8"))
             _render_files(path)
+        report_path = proposal / "verification.json"
+        report = json.loads(report_path.read_text(encoding="utf-8")) if report_path.exists() else {}
+        legacy_digest = sha256((proposal / "puzzle.json").read_bytes()).hexdigest()
+        if report.get("puzzle_sha256") not in (puzzle_digest, legacy_digest):
+            report = {"freedom": report["freedom"]} if "freedom" in report else {}
+        report.update({
+            "schema_version": 1, "puzzle": "puzzle.json", "puzzle_sha256": puzzle_digest,
+            "grid_encoding": "Each solution is an 81-character row-major digit string.",
+            "design_metrics": design_metrics(lines, parity),
+            "audit": _compact(audit(lines, parity=parity)),
+            "qualification": "Removal/endpoint irreducibility is local. No global minimum clue count or human difficulty rating is claimed.",
+        })
+        report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(f"{proposal.name}: UNIQUE; {'checked' if check else 'built'} English puzzle and solution cards")
 
 

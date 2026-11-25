@@ -56,7 +56,7 @@ symmetry. Other asymmetric clue types could also work.
 
 ## A concrete zero-given puzzle
 
-**Even Island** uses just four thermometers, on **20 distinct cells**. Their
+**Even Island** (proposal 01) uses four thermometers, on **19 distinct cells**. Their
 paths neither overlap nor cross. There are no printed digits or parity marks.
 
 ![Blank puzzle](even_island_01/puzzle.png)
@@ -76,7 +76,7 @@ Coordinates below are one-based; the first cell is the bulb:
 | Thermometer | Bulb-to-tip path | Cells |
 |---|---|---:|
 | A | r7c4, r6c4, r5c5, r5c6 | 4 |
-| B | r9c3, r8c3, r7c2, r6c1, r7c1, r8c2 | 6 |
+| B | r9c3, r8c3, r7c2, r7c1, r8c2 | 5 |
 | C | r3c3, r2c4, r3c5, r2c5, r2c6, r3c6 | 6 |
 | D | r5c8, r5c9, r4c8, r3c9 | 4 |
 
@@ -105,8 +105,11 @@ Thus the island rule is essential, every line is essential, and none of the
 eight endpoints can simply be trimmed. This is **local irreducibility**,
 not a claim that four is the global minimum number of clues. In particular,
 three lines of different shapes or types, or using a different completed
-Sudoku, have not been ruled out. Deleting an internal segment or replacing a
-line is a different operation from trimming an endpoint.
+Sudoku, have not been ruled out by this local test. Proposal 03 in the
+[catalogue](README.md) now supplies a three-line construction using whispers
+and a short thermometer. All legal one-cell interior thermometer shortcuts
+have also been checked; one shortened proposal 01 from 20 to 19 marked cells.
+Arbitrary line replacements are a broader search problem.
 
 Adding the clues in their A, B, C, D order makes the two sorts of freedom
 particularly visible:
@@ -115,14 +118,14 @@ particularly visible:
 |---|---:|---:|
 | None | 8 | 318,563,942,400 |
 | A | 8 | Multiple |
-| A, B | 4 | Multiple |
-| A, B, C | 1 | **60 exactly** |
+| A, B | 7 | Multiple |
+| A, B, C | 1 | **100 exactly** |
 | A, B, C, D | 1 | **1 exactly** |
 
-Thus the first three thermometers fix the geometry while still allowing 60
-different digit completions; D selects one of those 60. This order is an
+Thus the first three thermometers fix the geometry while still allowing 100
+different digit completions; D selects one of those 100. This order is an
 analysis of the constraints, not a prescribed human solving sequence. The
-60 count is a finished enumeration, not the two-solution cutoff. It can be
+100 count is a finished enumeration, not the two-solution cutoff. It can be
 reproduced by calling `verify(lines[:3], limit=10000)` from Python.
 
 In this example, propagation finishes or rejects each fixed orientation
@@ -183,12 +186,14 @@ JSON. The cleaned construction search is now available as
 a different locally irreducible candidate; the published design is specified
 by its explicit cell paths. See the [catalogue instructions](README.md).
 
-Useful next targets are three-line mixed thermometer/whisper puzzles, fewer
+Proposal 03 achieves a three-line mixed thermometer/whisper puzzle, and
+proposal 02 supplies the minimum two parity marks for orientation. These
+are compared in the [catalogue](README.md). Useful next targets include fewer
 turns per line, approximate rotational balance of the artwork, and a human
 solve trace. Search over different normalized even and odd fillings as well
 as digit permutations; varying only the 2,880 global relabelings explores a
-tiny fraction of the possible boards. A three-line construction would be an
-improvement, not a consequence of the existing uniqueness theorem.
+tiny fraction of the possible boards. A better clue count is a construction
+result, not a consequence of the existing island uniqueness theorem.
 
 ## Solution (spoiler)
 

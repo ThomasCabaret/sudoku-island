@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "title": "Whispered Island",
+  "givens": [],
+  "rules": [
+    "Place digits 1-9 once each in every row, column and 3x3 box.",
+    "All cells containing even digits are orthogonally connected.",
+    "Lines may connect cells diagonally; diagonal contact does not connect even cells.",
+    "Digits strictly increase along each thermometer from its bulb to its tip.",
+    "Adjacent digits on green German whisper lines differ by at least 5."
+  ],
+  "coordinate_convention": "One-based [row, column]; the first cell is the bulb.",
+  "lines": [
+    {
+      "kind": "whisper",
+      "cells": [
+        [
+          1,
+          8
+        ],
+        [
+          2,
+          9
+        ],
+        [
+          3,
+          9
+        ],
+        [
+          4,
+          8
+        ],
+        [
+          5,
+          8
+        ],
+        [
+          6,
+          8
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          7,
+          6
+        ],
+        [
+          6,
+          5
+        ]
+      ],
+      "difference": 5
+    },
+    {
+      "kind": "whisper",
+      "cells": [
+        [
+          3,
+          6
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          6,
+          2
+        ],
+        [
+          7,
+          1
+        ],
+        [
+          7,
+          2
+        ],
+        [
+          8,
+          2
+        ],
+        [
+          9,
+          2
+        ]
+      ],
+      "difference": 5
+    },
+    {
+      "kind": "thermometer",
+      "cells": [
+        [
+          9,
+          8
+        ],
+        [
+          8,
+          9
+        ]
+      ]
+    }
+  ]
+}

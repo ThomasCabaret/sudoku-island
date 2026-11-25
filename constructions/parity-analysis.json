@@ -1,0 +1,49 @@
+{
+  "scope": "Orienting the eight proven parity masks, before any line or digit clues.",
+  "reference_pattern": [
+    15,
+    393,
+    408,
+    464,
+    113,
+    39,
+    60,
+    102,
+    450
+  ],
+  "minimum_marks": 2,
+  "single_mark_cases_checked": 81,
+  "single_mark_survivor_histogram": {
+    "2": 4,
+    "3": 15,
+    "4": 20,
+    "5": 25,
+    "6": 12,
+    "8": 5
+  },
+  "two_cell_subsets_checked": 3240,
+  "orienting_pairs_for_reference": 378,
+  "example": [
+    {
+      "cell": [
+        1,
+        1
+      ],
+      "kind": "even"
+    },
+    {
+      "cell": [
+        8,
+        9
+      ],
+      "kind": "odd"
+    }
+  ],
+  "example_survivors": 1,
+  "example_after_removing_each_mark": [
+    3,
+    4
+  ],
+  "proof": "No reference-consistent singleton isolates a mask. D4 symmetry carries this check to every mask. An explicit pair isolates the reference mask. Therefore the minimum is exactly two.",
+  "qualification": "Minimum for orientation alone; two parity marks do not fix any digit labels. Necessity in a complete line-clue puzzle must be checked separately."
+}

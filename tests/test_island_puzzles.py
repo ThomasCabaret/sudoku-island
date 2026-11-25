@@ -10,18 +10,32 @@ import tempfile
 import unittest
 
 from island_puzzles import (
-    Line, REFERENCE_PATTERN, _enumerate, _support, analyze_freedom, audit,
-    load_puzzle, main, render_svg, validate_solution, verify,
+    Line, ParityMark, REFERENCE_PATTERN, _enumerate, _renban_support, _support, analyze_freedom, audit,
+    load_parity, load_puzzle, main, render_svg, validate_solution, verify,
 )
 from sudoku_island import symmetry_orbit
 from constructions.build import build, check_png
-from constructions.search import _cover, construct
+from constructions.search import _cover, construct, reduce_lines
+from constructions.parity import analyze as analyze_parity, survivors
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class DomainSearchTests(unittest.TestCase):
+    def test_renban_support_against_independent_enumeration(self):
+        rng = random.Random(6)
+        for _ in range(120):
+            domains = tuple(sum(1 << d for d in rng.sample(range(9), rng.randrange(1, 5)))
+                            for _ in range(rng.randrange(2, 5)))
+            expected = [0] * len(domains)
+            choices = [[d for d in range(9) if mask >> d & 1] for mask in domains]
+            for assignment in itertools.product(*choices):
+                if len(set(assignment)) == len(assignment) and max(assignment) - min(assignment) == len(assignment) - 1:
+                    for i, value in enumerate(assignment):
+                        expected[i] |= 1 << value
+            self.assertEqual(_renban_support(domains), tuple(expected))
+
     def test_all_small_latin_squares_against_naive_enumeration(self):
         for size in (2, 3):
             units = tuple((tuple(r * size + c for c in range(size)), (1 << size) - 1)
@@ -84,13 +98,13 @@ class PuzzleTests(unittest.TestCase):
 
     def test_orientation_then_digit_freedom(self):
         patterns = symmetry_orbit(REFERENCE_PATTERN)
-        for count, expected in ((1, 8), (2, 4), (3, 1), (4, 1)):
+        for count, expected in ((1, 8), (2, 7), (3, 1), (4, 1)):
             survivors = sum(verify(self.lines[:count], fixed_pattern=pattern).status != "UNSAT"
                             for pattern in patterns)
             self.assertEqual(survivors, expected)
         result = verify(self.lines[:3], limit=10000)
         self.assertTrue(result.exhaustive)
-        self.assertEqual(len(result.solutions), 60)
+        self.assertEqual(len(result.solutions), 100)
 
     def test_unknown_never_claims_uniqueness(self):
         result = verify(self.lines, timeout=1e-12)
@@ -107,10 +121,10 @@ class PuzzleTests(unittest.TestCase):
         self.assertNotEqual(grid, complemented)
         self.assertFalse(validate_solution(complemented, self.lines))
 
-    def test_twenty_disjoint_cells_and_no_geometric_crossings(self):
+    def test_nineteen_disjoint_cells_and_no_geometric_crossings(self):
         cells = [cell for line in self.lines for cell in line.cells]
-        self.assertEqual(len(cells), 20)
-        self.assertEqual(len(set(cells)), 20)
+        self.assertEqual(len(cells), 19)
+        self.assertEqual(len(set(cells)), 19)
         edges = [edge for line in self.lines for edge in zip(line.cells, line.cells[1:])]
         for i, (a, b) in enumerate(edges):
             for c, d in edges[i + 1:]:
@@ -143,6 +157,62 @@ class PuzzleTests(unittest.TestCase):
 
 
 class ConstructionTests(unittest.TestCase):
+    def test_minimum_parity_marks_and_complete_puzzle_necessity(self):
+        report = analyze_parity()
+        self.assertEqual(report["minimum_marks"], 2)
+        self.assertEqual(report["orienting_pairs_for_reference"], 378)
+        self.assertNotIn(1, report["single_mark_survivor_histogram"])
+        marks = (ParityMark(0, True), ParityMark(71, False))
+        self.assertEqual(len(survivors(marks)), 1)
+        self.assertEqual([len(survivors((mark,))) for mark in marks], [4, 3])
+        with self.assertRaises(ValueError):
+            load_parity({"parity": [{"cell": [1, 1], "kind": "even"}, {"cell": [1, 1], "kind": "odd"}]})
+
+    def test_all_catalogue_designs_are_unique_and_irreducible(self):
+        for path in sorted((ROOT / "constructions").glob("*/puzzle.json")):
+            with self.subTest(proposal=path.parent.name):
+                data, lines = load_puzzle(path)
+                parity = load_parity(data)
+                report = audit(lines, parity=parity)
+                self.assertEqual(report["full"]["status"], "UNIQUE")
+                self.assertTrue(report["full"]["exhaustive"])
+                self.assertEqual(report["without_island_rule"]["status"], "MULTIPLE")
+                for case in report["without_each_line"] + report["shortened_lines"] + report["without_each_parity_mark"]:
+                    self.assertEqual(case["result"]["status"], "MULTIPLE")
+                for case in report["thermometer_shortcuts"]:
+                    self.assertEqual(case["result"]["status"], "MULTIPLE")
+                with contextlib.redirect_stdout(io.StringIO()):
+                    build(path.parent, check=True)
+                svg = (path.parent / "puzzle.svg").read_text(encoding="utf-8")
+                self.assertIn('width="1280" height="800"', svg)
+                self.assertIn("orthogonally connected", svg)
+                self.assertNotIn('class="digit"', svg)
+                self.assertIn('class="digit"', (path.parent / "solution.svg").read_text(encoding="utf-8"))
+
+    def test_mixed_reduction_keeps_whisper_semantics(self):
+        data, lines = load_puzzle(ROOT / "constructions" / "even_island_03" / "puzzle.json")
+        self.assertEqual([line.kind for line in lines], ["whisper", "whisper", "thermometer"])
+        # A formerly redundant endpoint is put back; the reducer must remove it
+        # using the whisper relation, never converting it into a thermometer.
+        expanded = (Line("whisper", (8,) + lines[0].cells),) + lines[1:]
+        reduced = reduce_lines(expanded)
+        self.assertEqual(reduced, lines)
+        self.assertEqual(verify(reduced).status, "UNIQUE")
+        whispers = tuple(line for line in lines if line.kind == "whisper")
+        pair = verify(whispers, limit=1000)
+        self.assertTrue(pair.exhaustive)
+        self.assertEqual(len(pair.solutions), 2)
+        complement = tuple(tuple(10 - digit for digit in row) for row in pair.solutions[0])
+        self.assertEqual(pair.solutions[1], complement)
+
+    def test_two_anchors_exact_parity_counts(self):
+        data, lines = load_puzzle(ROOT / "constructions" / "even_island_02" / "puzzle.json")
+        parity = load_parity(data)
+        for marks, expected in (((), 743), (parity[:1], 397), (parity[1:], 246), (parity, 1)):
+            result = verify(lines, parity=marks, limit=1000)
+            self.assertTrue(result.exhaustive)
+            self.assertEqual(len(result.solutions), expected)
+
     def test_bounded_cover_against_brute_force(self):
         rng = random.Random(12)
         count = 5

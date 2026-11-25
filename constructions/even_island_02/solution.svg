@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="800" viewBox="0 0 1280 800">
+<title>Two Anchors - Solution</title>
+<rect width="1280" height="800" fill="white"/>
+<path d="M 664 96 V 736" stroke="#dce3e9" stroke-width="1"/>
+<text x="704" y="108" font-family="Helvetica" font-size="13" fill="#536170">SUDOKU / EVEN ISLAND</text>
+<text x="704" y="151" font-family="Helvetica" font-size="32" fill="#172433">Two Anchors</text>
+<text x="704" y="184" font-family="Helvetica" font-size="13" fill="#536170">SOLUTION</text>
+<rect class="even-cell" x="48" y="112" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="112" y="112" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="176" y="112" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="240" y="112" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="48" y="176" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="240" y="176" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="496" y="176" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="560" y="176" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="240" y="240" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="304" y="240" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="496" y="240" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="560" y="240" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="304" y="304" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="432" y="304" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="496" y="304" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="560" y="304" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="48" y="368" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="304" y="368" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="368" y="368" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="432" y="368" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="48" y="432" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="112" y="432" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="176" y="432" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="368" y="432" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="176" y="496" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="240" y="496" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="304" y="496" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="368" y="496" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="112" y="560" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="176" y="560" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="368" y="560" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="432" y="560" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="112" y="624" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="432" y="624" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="496" y="624" width="64" height="64" fill="#e8f0f6"/>
+<rect class="even-cell" x="560" y="624" width="64" height="64" fill="#e8f0f6"/>
+<path d="M 48 112 H 624 M 48 112 V 688" stroke="#333" stroke-width="3"/>
+<path d="M 48 176 H 624 M 112 112 V 688" stroke="#333" stroke-width="1"/>
+<path d="M 48 240 H 624 M 176 112 V 688" stroke="#333" stroke-width="1"/>
+<path d="M 48 304 H 624 M 240 112 V 688" stroke="#333" stroke-width="3"/>
+<path d="M 48 368 H 624 M 304 112 V 688" stroke="#333" stroke-width="1"/>
+<path d="M 48 432 H 624 M 368 112 V 688" stroke="#333" stroke-width="1"/>
+<path d="M 48 496 H 624 M 432 112 V 688" stroke="#333" stroke-width="3"/>
+<path d="M 48 560 H 624 M 496 112 V 688" stroke="#333" stroke-width="1"/>
+<path d="M 48 624 H 624 M 560 112 V 688" stroke="#333" stroke-width="1"/>
+<path d="M 48 688 H 624 M 624 112 V 688" stroke="#333" stroke-width="3"/>
+<rect class="parity-even" x="62" y="126" width="36" height="36" fill="#e9f4fb" stroke="#276b94" stroke-width="2.5"/>
+<circle class="parity-odd" cx="592" cy="592" r="18" fill="#e9f4fb" stroke="#276b94" stroke-width="2.5"/>
+<polyline points="464,592 400,528 400,592 336,656 272,592" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="464" cy="592" r="18" fill="#c4ccd4"/>
+<polyline points="464,208 528,272 592,336 592,272" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="464" cy="208" r="18" fill="#c4ccd4"/>
+<polyline points="528,464 528,528 592,464 592,528" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="528" cy="464" r="18" fill="#c4ccd4"/>
+<polyline points="144,336 144,272 208,272 144,208 208,144" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="144" cy="336" r="18" fill="#c4ccd4"/>
+<text class="digit" x="72" y="154" font-family="Helvetica" font-size="29" fill="#172433">2</text>
+<text class="digit" x="136" y="154" font-family="Helvetica" font-size="29" fill="#172433">6</text>
+<text class="digit" x="200" y="154" font-family="Helvetica" font-size="29" fill="#172433">8</text>
+<text class="digit" x="264" y="154" font-family="Helvetica" font-size="29" fill="#172433">4</text>
+<text class="digit" x="328" y="154" font-family="Helvetica" font-size="29" fill="#172433">3</text>
+<text class="digit" x="392" y="154" font-family="Helvetica" font-size="29" fill="#172433">7</text>
+<text class="digit" x="456" y="154" font-family="Helvetica" font-size="29" fill="#172433">5</text>
+<text class="digit" x="520" y="154" font-family="Helvetica" font-size="29" fill="#172433">9</text>
+<text class="digit" x="584" y="154" font-family="Helvetica" font-size="29" fill="#172433">1</text>
+<text class="digit" x="72" y="218" font-family="Helvetica" font-size="29" fill="#172433">4</text>
+<text class="digit" x="136" y="218" font-family="Helvetica" font-size="29" fill="#172433">7</text>
+<text class="digit" x="200" y="218" font-family="Helvetica" font-size="29" fill="#172433">1</text>
+<text class="digit" x="264" y="218" font-family="Helvetica" font-size="29" fill="#172433">8</text>
+<text class="digit" x="328" y="218" font-family="Helvetica" font-size="29" fill="#172433">9</text>
+<text class="digit" x="392" y="218" font-family="Helvetica" font-size="29" fill="#172433">5</text>
+<text class="digit" x="456" y="218" font-family="Helvetica" font-size="29" fill="#172433">3</text>
+<text class="digit" x="520" y="218" font-family="Helvetica" font-size="29" fill="#172433">6</text>
+<text class="digit" x="584" y="218" font-family="Helvetica" font-size="29" fill="#172433">2</text>
+<text class="digit" x="72" y="282" font-family="Helvetica" font-size="29" fill="#172433">9</text>
+<text class="digit" x="136" y="282" font-family="Helvetica" font-size="29" fill="#172433">3</text>
+<text class="digit" x="200" y="282" font-family="Helvetica" font-size="29" fill="#172433">5</text>
+<text class="digit" x="264" y="282" font-family="Helvetica" font-size="29" fill="#172433">6</text>
+<text class="digit" x="328" y="282" font-family="Helvetica" font-size="29" fill="#172433">2</text>
+<text class="digit" x="392" y="282" font-family="Helvetica" font-size="29" fill="#172433">1</text>
+<text class="digit" x="456" y="282" font-family="Helvetica" font-size="29" fill="#172433">7</text>
+<text class="digit" x="520" y="282" font-family="Helvetica" font-size="29" fill="#172433">4</text>
+<text class="digit" x="584" y="282" font-family="Helvetica" font-size="29" fill="#172433">8</text>
+<text class="digit" x="72" y="346" font-family="Helvetica" font-size="29" fill="#172433">5</text>
+<text class="digit" x="136" y="346" font-family="Helvetica" font-size="29" fill="#172433">1</text>
+<text class="digit" x="200" y="346" font-family="Helvetica" font-size="29" fill="#172433">3</text>
+<text class="digit" x="264" y="346" font-family="Helvetica" font-size="29" fill="#172433">7</text>
+<text class="digit" x="328" y="346" font-family="Helvetica" font-size="29" fill="#172433">4</text>
+<text class="digit" x="392" y="346" font-family="Helvetica" font-size="29" fill="#172433">9</text>
+<text class="digit" x="456" y="346" font-family="Helvetica" font-size="29" fill="#172433">8</text>
+<text class="digit" x="520" y="346" font-family="Helvetica" font-size="29" fill="#172433">2</text>
+<text class="digit" x="584" y="346" font-family="Helvetica" font-size="29" fill="#172433">6</text>
+<text class="digit" x="72" y="410" font-family="Helvetica" font-size="29" fill="#172433">8</text>
+<text class="digit" x="136" y="410" font-family="Helvetica" font-size="29" fill="#172433">9</text>
+<text class="digit" x="200" y="410" font-family="Helvetica" font-size="29" fill="#172433">7</text>
+<text class="digit" x="264" y="410" font-family="Helvetica" font-size="29" fill="#172433">1</text>
+<text class="digit" x="328" y="410" font-family="Helvetica" font-size="29" fill="#172433">6</text>
+<text class="digit" x="392" y="410" font-family="Helvetica" font-size="29" fill="#172433">2</text>
+<text class="digit" x="456" y="410" font-family="Helvetica" font-size="29" fill="#172433">4</text>
+<text class="digit" x="520" y="410" font-family="Helvetica" font-size="29" fill="#172433">5</text>
+<text class="digit" x="584" y="410" font-family="Helvetica" font-size="29" fill="#172433">3</text>
+<text class="digit" x="72" y="474" font-family="Helvetica" font-size="29" fill="#172433">6</text>
+<text class="digit" x="136" y="474" font-family="Helvetica" font-size="29" fill="#172433">4</text>
+<text class="digit" x="200" y="474" font-family="Helvetica" font-size="29" fill="#172433">2</text>
+<text class="digit" x="264" y="474" font-family="Helvetica" font-size="29" fill="#172433">3</text>
+<text class="digit" x="328" y="474" font-family="Helvetica" font-size="29" fill="#172433">5</text>
+<text class="digit" x="392" y="474" font-family="Helvetica" font-size="29" fill="#172433">8</text>
+<text class="digit" x="456" y="474" font-family="Helvetica" font-size="29" fill="#172433">9</text>
+<text class="digit" x="520" y="474" font-family="Helvetica" font-size="29" fill="#172433">1</text>
+<text class="digit" x="584" y="474" font-family="Helvetica" font-size="29" fill="#172433">7</text>
+<text class="digit" x="72" y="538" font-family="Helvetica" font-size="29" fill="#172433">7</text>
+<text class="digit" x="136" y="538" font-family="Helvetica" font-size="29" fill="#172433">5</text>
+<text class="digit" x="200" y="538" font-family="Helvetica" font-size="29" fill="#172433">6</text>
+<text class="digit" x="264" y="538" font-family="Helvetica" font-size="29" fill="#172433">2</text>
+<text class="digit" x="328" y="538" font-family="Helvetica" font-size="29" fill="#172433">8</text>
+<text class="digit" x="392" y="538" font-family="Helvetica" font-size="29" fill="#172433">4</text>
+<text class="digit" x="456" y="538" font-family="Helvetica" font-size="29" fill="#172433">1</text>
+<text class="digit" x="520" y="538" font-family="Helvetica" font-size="29" fill="#172433">3</text>
+<text class="digit" x="584" y="538" font-family="Helvetica" font-size="29" fill="#172433">9</text>
+<text class="digit" x="72" y="602" font-family="Helvetica" font-size="29" fill="#172433">3</text>
+<text class="digit" x="136" y="602" font-family="Helvetica" font-size="29" fill="#172433">8</text>
+<text class="digit" x="200" y="602" font-family="Helvetica" font-size="29" fill="#172433">4</text>
+<text class="digit" x="264" y="602" font-family="Helvetica" font-size="29" fill="#172433">9</text>
+<text class="digit" x="328" y="602" font-family="Helvetica" font-size="29" fill="#172433">1</text>
+<text class="digit" x="392" y="602" font-family="Helvetica" font-size="29" fill="#172433">6</text>
+<text class="digit" x="456" y="602" font-family="Helvetica" font-size="29" fill="#172433">2</text>
+<text class="digit" x="520" y="602" font-family="Helvetica" font-size="29" fill="#172433">7</text>
+<text class="digit" x="584" y="602" font-family="Helvetica" font-size="29" fill="#172433">5</text>
+<text class="digit" x="72" y="666" font-family="Helvetica" font-size="29" fill="#172433">1</text>
+<text class="digit" x="136" y="666" font-family="Helvetica" font-size="29" fill="#172433">2</text>
+<text class="digit" x="200" y="666" font-family="Helvetica" font-size="29" fill="#172433">9</text>
+<text class="digit" x="264" y="666" font-family="Helvetica" font-size="29" fill="#172433">5</text>
+<text class="digit" x="328" y="666" font-family="Helvetica" font-size="29" fill="#172433">7</text>
+<text class="digit" x="392" y="666" font-family="Helvetica" font-size="29" fill="#172433">3</text>
+<text class="digit" x="456" y="666" font-family="Helvetica" font-size="29" fill="#172433">6</text>
+<text class="digit" x="520" y="666" font-family="Helvetica" font-size="29" fill="#172433">8</text>
+<text class="digit" x="584" y="666" font-family="Helvetica" font-size="29" fill="#172433">4</text>
+<text x="704" y="228" font-family="Helvetica" font-size="14" fill="#536170">RULES</text>
+<text x="704" y="263" font-family="Helvetica" font-size="17" fill="#172433">1.</text>
+<text x="730" y="263" font-family="Helvetica" font-size="17" fill="#172433">Place the digits 1-9 once in each row, each</text>
+<text x="730" y="286" font-family="Helvetica" font-size="17" fill="#172433">column and each 3x3 box.</text>
+<text x="704" y="323" font-family="Helvetica" font-size="17" fill="#172433">2.</text>
+<text x="730" y="323" font-family="Helvetica" font-size="17" fill="#172433">All cells containing an even digit (2, 4, 6 or 8)</text>
+<text x="730" y="346" font-family="Helvetica" font-size="17" fill="#172433">must be orthogonally connected.</text>
+<text x="704" y="383" font-family="Helvetica" font-size="17" fill="#172433">3.</text>
+<text x="730" y="383" font-family="Helvetica" font-size="17" fill="#172433">A blue square contains an even digit. A blue</text>
+<text x="730" y="406" font-family="Helvetica" font-size="17" fill="#172433">circle contains an odd digit.</text>
+<text x="704" y="443" font-family="Helvetica" font-size="17" fill="#172433">4.</text>
+<text x="730" y="443" font-family="Helvetica" font-size="17" fill="#172433">Digits strictly increase along each grey</text>
+<text x="730" y="466" font-family="Helvetica" font-size="17" fill="#172433">thermometer, from its bulb to its tip.</text>
+<text x="704" y="704" font-family="Helvetica" font-size="14" fill="#536170">Line segments may connect cells diagonally.</text>
+<text x="704" y="726" font-family="Helvetica" font-size="14" fill="#536170">Even cells connect through sides, never diagonally.</text>
+<text x="704" y="748" font-family="Helvetica" font-size="14" fill="#536170">Shaded cells contain even digits.</text>
+</svg>

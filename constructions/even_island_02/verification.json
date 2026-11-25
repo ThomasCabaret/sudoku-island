@@ -1,0 +1,537 @@
+{
+  "schema_version": 1,
+  "puzzle": "puzzle.json",
+  "puzzle_sha256": "41876952d5eb510d2c4079530b55133761484c90d507b2aec35b745f2bc3aba1",
+  "grid_encoding": "Each solution is an 81-character row-major digit string.",
+  "design_metrics": {
+    "line_count": 4,
+    "parity_mark_count": 2,
+    "clue_count": 6,
+    "line_cells": 18,
+    "marked_cells": 20,
+    "segments": 14,
+    "turns": 9,
+    "longest_line": 5,
+    "clue_families": [
+      "parity",
+      "thermometer"
+    ]
+  },
+  "audit": {
+    "full": {
+      "status": "UNIQUE",
+      "solutions": [
+        "268437591471895362935621748513749826897162453642358917756284139384916275129573684"
+      ],
+      "exhaustive": true,
+      "states": 10,
+      "elapsed_seconds": 0.004544000024907291,
+      "reason": "The entire solution space was exhausted."
+    },
+    "orientations": [
+      {
+        "pattern": [
+          15,
+          393,
+          408,
+          464,
+          113,
+          39,
+          60,
+          102,
+          450
+        ],
+        "result": {
+          "status": "UNIQUE",
+          "solutions": [
+            "268437591471895362935621748513749826897162453642358917756284139384916275129573684"
+          ],
+          "exhaustive": true,
+          "states": 3,
+          "elapsed_seconds": 0.0021613999269902706,
+          "reason": "The entire solution space was exhausted."
+        }
+      },
+      {
+        "pattern": [
+          51,
+          417,
+          225,
+          71,
+          92,
+          240,
+          408,
+          270,
+          270
+        ],
+        "result": {
+          "status": "UNSAT",
+          "solutions": [],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.0002479999093338847,
+          "reason": "The entire solution space was exhausted."
+        }
+      },
+      {
+        "pattern": [
+          135,
+          204,
+          120,
+          456,
+          284,
+          23,
+          51,
+          291,
+          480
+        ],
+        "result": {
+          "status": "UNSAT",
+          "solutions": [],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.0002647999208420515,
+          "reason": "The entire solution space was exhausted."
+        }
+      },
+      {
+        "pattern": [
+          225,
+          225,
+          51,
+          30,
+          116,
+          452,
+          270,
+          267,
+          408
+        ],
+        "result": {
+          "status": "UNSAT",
+          "solutions": [],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.0004091000882908702,
+          "reason": "The entire solution space was exhausted."
+        }
+      },
+      {
+        "pattern": [
+          270,
+          270,
+          408,
+          240,
+          92,
+          71,
+          225,
+          417,
+          51
+        ],
+        "result": {
+          "status": "UNSAT",
+          "solutions": [],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.00024039996787905693,
+          "reason": "The entire solution space was exhausted."
+        }
+      },
+      {
+        "pattern": [
+          408,
+          267,
+          270,
+          452,
+          116,
+          30,
+          51,
+          225,
+          225
+        ],
+        "result": {
+          "status": "UNSAT",
+          "solutions": [],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.0002343000378459692,
+          "reason": "The entire solution space was exhausted."
+        }
+      },
+      {
+        "pattern": [
+          450,
+          102,
+          60,
+          39,
+          113,
+          464,
+          408,
+          393,
+          15
+        ],
+        "result": {
+          "status": "UNSAT",
+          "solutions": [],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.00023120001424103975,
+          "reason": "The entire solution space was exhausted."
+        }
+      },
+      {
+        "pattern": [
+          480,
+          291,
+          51,
+          23,
+          284,
+          456,
+          120,
+          204,
+          135
+        ],
+        "result": {
+          "status": "UNSAT",
+          "solutions": [],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.00023369991686195135,
+          "reason": "The entire solution space was exhausted."
+        }
+      }
+    ],
+    "without_island_rule": {
+      "status": "MULTIPLE",
+      "solutions": [
+        "276453189158679243934218657715842936643591872892736514369184725487925361521367498",
+        "276453189158679243934218657715842936849136572362597814691384725487925361523761498"
+      ],
+      "exhaustive": false,
+      "states": 37,
+      "elapsed_seconds": 0.010220100055448711,
+      "reason": "At least 2 distinct solutions were found."
+    },
+    "without_each_line": [
+      {
+        "removed_line": 1,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268437591471859362935261748713945826659128473842376915594682137386714259127593684",
+            "268437591471859362935261748713945826659182473842376915594628137386714259127593684"
+          ],
+          "exhaustive": false,
+          "states": 14,
+          "elapsed_seconds": 0.004850300028920174,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "removed_line": 2,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "248637591671495328935821746513749682897162453462358917756284139384916275129573864",
+            "248637591671495328935821746513749862897162453462358917756284139384916275129573684"
+          ],
+          "exhaustive": false,
+          "states": 12,
+          "elapsed_seconds": 0.004294599988497794,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "removed_line": 3,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268413579471895362935627148513749826897162435642358791756284913184936257329571684",
+            "268413579471895362935627148513749826897162435642358917156284793784936251329571684"
+          ],
+          "exhaustive": false,
+          "states": 9,
+          "elapsed_seconds": 0.0040686000138521194,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "removed_line": 4,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268417593479853162351629748197345826835162479642798315516284937784936251923571684",
+            "268417593479853162531629748397145826815362479642798315156284937784936251923571684"
+          ],
+          "exhaustive": false,
+          "states": 14,
+          "elapsed_seconds": 0.005061600008048117,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      }
+    ],
+    "shortened_lines": [
+      {
+        "line": 1,
+        "removed_end": "bulb",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268437591471895362935261748513729486697148253842356917754682139326914875189573624",
+            "268437591471895362935261748513729486897146253642358917754682139326914875189573624"
+          ],
+          "exhaustive": false,
+          "states": 19,
+          "elapsed_seconds": 0.005227699992246926,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 1,
+        "removed_end": "tip",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268437591471859362935621748713945826859162473642378915596284137384716259127593684",
+            "268473591471859362935621748317945826859162473642738915596284137784316259123597684"
+          ],
+          "exhaustive": false,
+          "states": 8,
+          "elapsed_seconds": 0.00333939993288368,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 2,
+        "removed_end": "bulb",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268437591471895362935621748513749826897162453642358917756284139384916275129573684",
+            "268457391471893562935621748513749826897162453642538917756284139384916275129375684"
+          ],
+          "exhaustive": false,
+          "states": 4,
+          "elapsed_seconds": 0.0025212999898940325,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 2,
+        "removed_end": "tip",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "248637591671295384935481762513749628897162453462358917756824139384916275129573846",
+            "248637591671295384935481762513769428897142653462358917756824139384916275129573846"
+          ],
+          "exhaustive": false,
+          "states": 10,
+          "elapsed_seconds": 0.0036464999429881573,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 3,
+        "removed_end": "bulb",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268431579471895362935627148513749826897362451642158793356284917784916235129573684",
+            "268431579471895362935627148517349826893762451642158793356284917784916235129573684"
+          ],
+          "exhaustive": false,
+          "states": 8,
+          "elapsed_seconds": 0.0039230999536812305,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 3,
+        "removed_end": "tip",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268413597471895362935627148513749826897162435642358719156284973784936251329571684",
+            "268413597471895362935627148513749826897162453642358719756284931184936275329571684"
+          ],
+          "exhaustive": false,
+          "states": 7,
+          "elapsed_seconds": 0.00393499992787838,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 4,
+        "removed_end": "bulb",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268415973457839162913627548395741826871362495642598317136284759784956231529173684",
+            "268417953457839162913625748791543826835162497642798315176284539384956271529371684"
+          ],
+          "exhaustive": false,
+          "states": 11,
+          "elapsed_seconds": 0.004422200028784573,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 4,
+        "removed_end": "tip",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268437591471895362935621748513749826897162453642358917756284139384916275129573684",
+            "268419375493857162157623948931745826875162493642398517516284739784936251329571684"
+          ],
+          "exhaustive": false,
+          "states": 14,
+          "elapsed_seconds": 0.005691100028343499,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      }
+    ],
+    "thermometer_shortcuts": [
+      {
+        "line": 1,
+        "removed_cell": 59,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268437591471895362935261748513749826697128453842356917754682139386914275129573684",
+            "268437591471895362935261748513749826697182453842356917754628139386914275129573684"
+          ],
+          "exhaustive": false,
+          "states": 19,
+          "elapsed_seconds": 0.005376000073738396,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 2,
+        "removed_cell": 35,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "248637591671495328935281746513749682897162453462358917756824139384916275129573864",
+            "248637591671495328935281746513749862897162453462358917756824139384916275129573684"
+          ],
+          "exhaustive": false,
+          "states": 11,
+          "elapsed_seconds": 0.004787400015629828,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 3,
+        "removed_cell": 61,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268413597471895362935627148517349826893162475642758913156284739784936251329571684",
+            "268437591471895362935621748513749826897162435642358917356284179784916253129573684"
+          ],
+          "exhaustive": false,
+          "states": 11,
+          "elapsed_seconds": 0.004045099951326847,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 3,
+        "removed_cell": 53,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268413597471895362935627148517349826893162475642758913156284739784936251329571684",
+            "268437591471895362935621748513749826897162435642358917356284179784916253129573684"
+          ],
+          "exhaustive": false,
+          "states": 7,
+          "elapsed_seconds": 0.004052900010719895,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 4,
+        "removed_cell": 19,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268435791451897362793621548517349826839762415642518937376284159184956273925173684",
+            "268435791451897362973621548315749826897162435642358917736284159584916273129573684"
+          ],
+          "exhaustive": false,
+          "states": 11,
+          "elapsed_seconds": 0.0042912999633699656,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 4,
+        "removed_cell": 20,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268415793457893162931627548715349826893762415642158937176284359584936271329571684",
+            "268417593457893162931625748715349826893762415642158937176284359584936271329571684"
+          ],
+          "exhaustive": false,
+          "states": 9,
+          "elapsed_seconds": 0.005688500008545816,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      }
+    ],
+    "without_each_parity_mark": [
+      {
+        "removed_mark": 1,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268437591471895362935621748513749826897162453642358917756284139384916275129573684",
+            "357261948869435172124897536916753824738142695542689317681324759475916283293578461"
+          ],
+          "exhaustive": false,
+          "states": 12,
+          "elapsed_seconds": 0.005844899918884039,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "removed_mark": 2,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "268437591471895362935621748513749826897162453642358917756284139384916275129573684",
+            "689342751271956384435718269824539617156287493793164825517623948342895176968471532"
+          ],
+          "exhaustive": false,
+          "states": 12,
+          "elapsed_seconds": 0.005715099978260696,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      }
+    ],
+    "human_difficulty": "Not established by the uniqueness search."
+  },
+  "qualification": "Removal/endpoint irreducibility is local. No global minimum clue count or human difficulty rating is claimed.",
+  "parity_study": {
+    "no_marks": {
+      "count": 743,
+      "exhaustive": true
+    },
+    "even_square_only": {
+      "count": 397,
+      "exhaustive": true
+    },
+    "odd_circle_only": {
+      "count": 246,
+      "exhaustive": true
+    },
+    "both_marks": {
+      "count": 1,
+      "exhaustive": true
+    }
+  }
+}
