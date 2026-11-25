@@ -36,6 +36,11 @@ This is local irreducibility, not a global
 minimum clue count or a human difficulty rating. The [analysis](analysis.md)
 explains the digit freedom, uniqueness checks, and construction method.
 
+The separate [automatic-solving benchmark](../benchmarks/report.md) starts
+from the printed statements and deliberately excludes the eight-mask theorem.
+It reports bounded search effort and memory for three solver configurations.
+See its [methodology and rerun commands](../benchmarks/README.md).
+
 ## What makes a useful elegant construction?
 
 We compare several costs instead of treating every long line as one cheap

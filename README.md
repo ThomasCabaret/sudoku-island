@@ -60,6 +60,13 @@ break this symmetry. See the [construction catalogue and tools](constructions/RE
 [recorded verification](constructions/even_island_01/verification.json).
 The catalogue includes separate solution cards and SVG sources for every PNG.
 
+A separate [rule-only solver benchmark](benchmarks/README.md) measures all four
+statements with ordinary CSP backtracking, graph propagation and SAT with
+connectivity cuts. These methods receive no island theorem, precomputed parity
+mask or expected solution. The [results table](benchmarks/report.md) records
+first-solution effort, uniqueness status, search counters and peak process
+memory, with explicit timeouts rather than inferred difficulty ratings.
+
 ```sh
 python island_puzzles.py analyze
 python island_puzzles.py verify constructions/even_island_01/puzzle.json --audit
@@ -243,6 +250,9 @@ The tests compare the independent witness checker against **all 65,536 binary
 completion, all twelve small-board k=3 solutions via successive exclusions,
 symmetry orbits, and interrupted searches. GitHub Actions
 runs the tests on Python 3.10, 3.12 and 3.13 and exercises the installed command.
+Rule-only benchmark tests check all 3^9 ternary states of a small connectivity
+graph and run unique/multiple/unsatisfiable fixtures with theorem entry points
+disabled. The Python 3.12 CI job also installs and tests the optional SAT engine.
 
 - `sudoku_island.py`: exact abstract solver, independent witness checker, CLI.
 - `sudoku_completion.py`: separate digit-placement search and Sudoku checker.
@@ -250,6 +260,8 @@ runs the tests on Python 3.10, 3.12 and 3.13 and exercises the installed command
   landscape SVG renderer.
 - `constructions/`: search/build tools, analysis and one folder per proposal,
   with standalone English PNG cards, SVG sources, solutions and verification.
+- `benchmarks/`: rule-only CSP/SAT solvers, isolated-run harness and measured
+  time, search-work and process-memory reports.
 - `tests/`: independent small-board oracles and regression tests.
 - `docs/`: completeness proof, compiled PDF and reference result.
 - `pyproject.toml`: optional installation and command entry point.

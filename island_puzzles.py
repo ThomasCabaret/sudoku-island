@@ -144,8 +144,13 @@ def _enumerate(
     accept: Callable[[tuple[int, ...]], None],
     stats: dict[str, int],
     deadline: float | None,
+    domain_filter: Callable[[list[int]], bool] | None = None,
 ) -> None:
-    """Exhaustive domain search; callbacks may explicitly interrupt enumeration."""
+    """Exhaustive domain search; an optional sound filter can narrow domains.
+
+    The filter returns False on contradiction. It must never add candidates.
+    Callbacks may explicitly interrupt enumeration.
+    """
     peers = [set().union(*(set(cells) for cells, _ in units if i in cells)) - {i}
              for i in range(len(initial))]
     arcs = [(a, b, _support(line.kind, line.difference, False),
@@ -195,6 +200,11 @@ def _enumerate(
                     if len(places) == 1 and domains[places[0]] != bit:
                         domains[places[0]] = bit
                         changed = True
+            if domain_filter is not None:
+                before = tuple(domains)
+                if not domain_filter(domains):
+                    return
+                changed |= before != tuple(domains)
             if not changed:
                 break
         choices = [i for i, domain in enumerate(domains) if domain.bit_count() > 1]
