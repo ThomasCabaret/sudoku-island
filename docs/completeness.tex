@@ -1,0 +1,285 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm,booktabs}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={Sudoku Island: Correctness and Completeness},pdfauthor={Sudoku Island project}}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\title{Sudoku Island Search\\\large Correctness, Completeness, and an Even-Digit Witness}
+\author{Sudoku Island project}
+\date{25 November 2026}
+
+\begin{document}
+\maketitle
+
+\section{The precise problem}
+Let $b\geq1$ and $n=b^2$. A board has $n$ rows, $n$ columns, and $n$
+boxes, each of size $b\times b$. A pattern is a subset $S$ of its cells.
+Two selected cells are adjacent if they share a side. There is no diagonal
+adjacency or wrapping at the boundary.
+
+For a given $k\in\{0,\ldots,n\}$, we require exactly $k$ cells of $S$ in
+each row, each column, and each box, and require that $S$ be nonempty and
+connected. Thus $|S|=nk$, and $k=0$ is excluded by definition. The standard
+problem uses $b=3$, $n=9$. Its objective is to minimize positive $k$.
+
+This is initially a binary problem: no Sudoku digits are assumed. A separate
+second stage tests whether the chosen $k=4$ pattern can be the even cells of
+a genuine Sudoku. No universal extension assumption is used.
+
+\section{Search representation}
+Each row is represented by a mask $m\in\{0,\ldots,2^n-1\}$ with exactly
+$k$ set bits. Bit zero denotes the leftmost column. All
+$\binom{n}{k}$ such masks are generated, in increasing lexicographic order
+of their selected column tuples. Rows are processed from top to bottom.
+
+After $d$ rows, the state consists of:
+\begin{itemize}
+\item the depth $d$ and the $n$ column counts;
+\item the $b$ box counts in the current band of $b$ rows (zero at band boundaries);
+\item the selected positions in the last processed row, with labels encoding
+which belong to the same component in the entire processed prefix.
+\end{itemize}
+An empty position has label zero. Positive labels are canonicalized by first
+appearance from left to right. All components of an accepted prefix meet its
+last row. At depth zero the frontier and counts are all zero.
+
+The actual row masks are retained as a witness path. For the ordinary
+existence search, they are not part of the failed-state cache key.
+Section~\ref{sec:complete} justifies this omission. A later uniqueness search
+adds the remaining matches against excluded patterns to this key.
+
+\clearpage
+\section{Transitions and safe rejection rules}
+\begin{lemma}[Quota bounds]
+Suppose a proposed row leaves column count $a_c$, with $r$ rows remaining.
+A necessary condition for a completion is
+\[
+ a_c\leq k\leq a_c+r.
+\]
+If its current-band box count is $q_j$ and $t$ rows remain in that band,
+a necessary condition is
+\[
+ q_j\leq k\leq q_j+tb.
+\]
+At the end of a column or band, these inequalities enforce equality to $k$.
+\end{lemma}
+\begin{proof}
+A future row contributes either zero or one cell to a particular column,
+and at most $b$ cells to a particular box. Counts never decrease. The stated
+bounds follow; at $r=0$ or $t=0$, the lower and upper bounds coincide.
+These are necessary conditions only, which is sufficient for safe rejection.
+\end{proof}
+
+\begin{lemma}[Exact frontier update]
+The function \texttt{\_advance} computes the component partition on the new
+frontier exactly, provided that no old component is lost.
+\end{lemma}
+\begin{proof}
+Create one node per old component and one per selected new cell. Join a new
+cell to its old component whenever the cell directly above it was selected,
+and join horizontally adjacent selected new cells. These are precisely all
+new edges. An old component already summarizes every path in the old prefix.
+Consequently, connected components of this small union graph are exactly
+components of the enlarged prefix, restricted to its frontier. Relabeling
+these components canonically changes no equivalences.
+\end{proof}
+
+\begin{lemma}[No disappearing component]
+For $k>0$, a prefix transition that leaves an old component without any cell
+in the new frontier cannot belong to a valid complete pattern.
+\end{lemma}
+\begin{proof}
+Every path from an old row to a new or later row must pass through the new
+frontier, since grid edges change row number by at most one. A component
+that has no representative there can never acquire further connections.
+The newly appended row contains $k>0$ selected cells. They lie outside that
+component, so the completed pattern would be disconnected, even if this was
+the final row. Rejecting the transition is therefore safe.
+\end{proof}
+
+In the implementation, the old frontier labels become union nodes. After
+adding the new edges, every old label must have the same union root as some
+selected new cell. Otherwise the transition is rejected. This implements the
+lemma without any geometric symmetry assumption.
+
+At depth $n$, acceptance requires exactly one positive frontier label.
+All row quotas hold by construction; the quota bounds have already enforced
+all column and box quotas. The frontier invariant then ensures global
+connectivity, including components formed in earlier rows.
+
+\clearpage
+\section{Exhaustiveness and memoization}\label{sec:complete}
+\begin{lemma}[Equivalent future problems]
+Two accepted prefixes with the same depth, column counts, current-band box
+counts, and canonical frontier partition admit exactly the same suffixes.
+\end{lemma}
+\begin{proof}
+Column counts completely determine outstanding column quotas. Current-band
+counts determine outstanding box quotas; earlier boxes are finished and
+later boxes are untouched. Depth determines which box band is being filled.
+Each future row must have exactly $k$ cells independently of the prefix.
+
+All contacts between a suffix and a prefix pass through the last prefix row.
+Its occupied positions and their connectivity partition determine which
+suffix connections merge old components. Since every prefix component meets
+that frontier, no other component information is needed. Thus quota tests,
+frontier transitions, and final acceptance agree for every possible suffix.
+\end{proof}
+
+\begin{theorem}[Soundness, termination, and completeness]
+With enough resources and no interruption, \texttt{solve} terminates and
+returns SAT if and only if a valid pattern exists; otherwise it returns UNSAT.
+Every returned witness satisfies the problem definition.
+\end{theorem}
+\begin{proof}
+For $k=0$ the answer is immediately UNSAT by nonemptiness. Suppose $k>0$.
+There are at most $\binom{n}{k}^{n}$ row sequences and recursion depth at
+most $n+1$, so the underlying search tree is finite.
+
+For soundness, every accepted leaf has the required quotas and one global
+component by the transition invariant and final test. The implementation
+also validates its witness using a separate whole-board count and graph
+traversal, raising an error if that check fails.
+
+For completeness, fix any valid full pattern. Its row masks all appear in
+the candidate lists. Its prefixes satisfy the quota bounds and cannot lose
+a component that must later connect to the rest. Therefore its path cannot
+be rejected by these rules. A cache hit cannot remove a successful suffix:
+only states for which all candidate continuations have failed are cached,
+and equal keys have identical suffix problems by the preceding lemma.
+Thus either the search finds another witness first, or reaches this one.
+UNSAT is returned only when no valid path remains.
+\end{proof}
+
+The transition cache merely stores a pure function of the frontier and new
+mask; eviction affects runtime only. The failed-state cache is local to each
+quota search. A time or state limit raises an interruption that propagates
+without caching the unfinished state, and produces UNKNOWN rather than UNSAT.
+
+\begin{theorem}[Minimum search]
+If quotas are tested in ascending positive order, the first SAT quota is
+the minimum provided all preceding answers are UNSAT.
+\end{theorem}
+\begin{proof}
+The SAT witness supplies an upper bound, while completeness of each earlier
+UNSAT decision excludes every smaller positive quota. If a quota returns
+UNKNOWN, the implementation stops without asserting a minimum.
+\end{proof}
+
+\clearpage
+\section{Computed result and Sudoku completion}
+The reference command is
+\begin{center}
+\texttt{python sudoku\_island.py --minimum --check-uniqueness}\\
+\texttt{--sudoku --json docs/results.json}
+\end{center}
+Its abstract search gives the following reproducible state counts. The SAT
+run stops at its first witness; it does not enumerate all $k=4$ solutions.
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+$k$ & Outcome & Expanded states & Failed-state cache hits\\
+\midrule
+1 & UNSAT & 10 & 0\\
+2 & UNSAT & 84 & 0\\
+3 & UNSAT & 1,016 & 3\\
+4 & SAT & 19,894 & 8,761\\
+\bottomrule
+\end{tabular}
+\end{center}
+The witness masks, from top to bottom, are
+\[
+(15,393,408,464,113,39,60,102,450).
+\]
+The separate digit search produces this complete Sudoku:
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{|ccc|ccc|ccc|}\hline
+2&4&6&8&1&3&5&7&9\\
+8&3&9&2&5&7&1&4&6\\
+5&7&1&6&4&9&3&2&8\\\hline
+3&9&5&7&2&1&8&6&4\\
+4&1&7&9&6&8&2&3&5\\
+6&2&8&5&3&4&7&9&1\\\hline
+7&5&2&4&8&6&9&1&3\\
+1&8&4&3&9&2&6&5&7\\
+9&6&3&1&7&5&4&8&2\\\hline
+\end{tabular}
+\end{center}
+The digit search chooses an unfilled cell of smallest current domain and
+tries every admissible digit: $\{2,4,6,8\}$ on the island and
+$\{1,3,5,7,9\}$ elsewhere. Used digits in the row, column and box are
+excluded. Each recursive step fills a cell; each failure undoes exactly its
+assignment. This finite branching search is complete for the chosen pattern.
+A separate validator checks all 27 Sudoku units and exact parity agreement.
+
+Every Sudoku with a connected even-digit set projects to a valid abstract
+$k=4$ pattern. The displayed completion proves that the abstract lower bound
+is attained by a genuine Sudoku. The next section establishes uniqueness of
+the minimum abstract shape. Rotating and reflecting this Sudoku therefore
+completes every minimum pattern. Digit assignments are not claimed to be unique.
+
+\clearpage
+\section{Uniqueness under rotations and reflections}
+Let $D_4$ be the eight symmetries of the square, consisting of four rotations
+and their compositions with one mirror reflection. These preserve side
+adjacency, row and column quotas, and the standard box partition. No other
+Sudoku permutations are used. For a reference solution $S$, let
+$E=\{g(S):g\in D_4\}$, with duplicates removed.
+
+The uniqueness check searches for a valid pattern outside $E$. At depth $d$
+it carries the set $M_d$ of indices of excluded patterns whose first $d$ rows
+equal the current path. Appending mask $m$ replaces this set by
+\[
+ M_{d+1}=\{i\in M_d : \text{row }d\text{ of }E_i=m\}.
+\]
+The failed-state key includes $M_d$. At a complete connected leaf, acceptance
+requires $M_n=\varnothing$. Thus a pattern is rejected at the leaf exactly when
+it belongs to $E$. Omitting this prefix information from the cache key would
+be unsound: geometrically equivalent prefix states can have different
+remaining exclusions.
+
+\begin{theorem}[Uniqueness decision]
+If the outside-orbit search returns UNSAT, every valid pattern is in $E$.
+If it returns SAT, its witness and $S$ belong to different symmetry orbits.
+\end{theorem}
+\begin{proof}
+The transition and quota arguments are unchanged. Equal augmented keys
+also have identical exclusion tests for each suffix, since their matching
+index sets agree. The completeness proof therefore applies to the space
+of valid patterns minus $E$. UNSAT means this difference is empty. SAT gives
+a validated member of the difference. UNKNOWN establishes neither conclusion.
+\end{proof}
+
+The reference $k=4$ pattern has eight distinct symmetry images, all validated
+as islands. The completed search outside these images returns UNSAT after
+493,104 expanded states and 434,528 failed-state cache hits (about 87 seconds
+on the development machine). Hence there are exactly eight oriented
+$k=4$ patterns and \textbf{one shape up to rotation and reflection}.
+This counts binary islands, not Sudoku digit assignments.
+
+Every symmetry image of the reference Sudoku remains a Sudoku, with its
+even cells equal to the corresponding image of the island. In conjunction
+with uniqueness this proves extendability of all minimum islands, without
+a general extension assumption for other binary patterns.
+
+\section{Evidence and scope of the guarantee}
+Tests compare the witness checker with all $2^{16}=65,536$ binary $4\times4$
+boards, and compare frontier transitions against direct graph traversal for
+all four-column prefixes of up to three rows. Additional tests cover the
+standard minimum, Sudoku completion, all twelve small-board $k=3$ solutions
+via successive exclusions, symmetry orbits, and interruption handling.
+
+The numerical minimum is computer-assisted: the proof above establishes the
+algorithm, while the recorded run supplies its outcomes. Tests are supporting
+evidence, not formal verification of Python or its runtime. The JSON file is
+an audit record, not a separately checkable UNSAT certificate. Memory exhaustion,
+external termination, and interrupted searches cannot establish UNSAT.
+No claim is made that every board is explicitly visited: safe pruning and
+equivalent failed states account for omitted branches.
+
+\end{document}

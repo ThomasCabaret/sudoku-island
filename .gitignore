@@ -1,0 +1,34 @@
+# Python and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local inputs and generated reports (the reference report is tracked in docs/)
+/sudoku_island_project.zip
+/initial-result.json
+/initial-uniqueness.json
+/results.json
+/output/
+/.tmp*/
+
+# LaTeX intermediates; the verified reference PDF is tracked
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
