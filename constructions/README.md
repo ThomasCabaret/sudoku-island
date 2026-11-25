@@ -23,6 +23,10 @@ is on a separately labeled card.
 
 Each PNG is **3840 x 2400 pixels**, rendered at 3x scale directly from its SVG.
 The grid is on the left and the title and complete rules on the right.
+Rule 2 restates the single connected island requirement and explicitly excludes
+diagonal contact. Cards credit Thomas Cabaret, carry the fixed edition date
+25 November 2026, and state procedural generation and verified uniqueness in
+a small footer. The uniqueness footer is emitted only after a completed check.
 The PNG embeds the SHA-256 digest of that SVG. The renderer checks uniqueness
 before building either card. The solution card highlights even cells so that
 the island can be inspected directly.

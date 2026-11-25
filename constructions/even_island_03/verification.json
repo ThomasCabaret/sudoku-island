@@ -25,7 +25,7 @@
       ],
       "exhaustive": true,
       "states": 24,
-      "elapsed_seconds": 0.007842799997888505,
+      "elapsed_seconds": 0.0076073999516665936,
       "reason": "The entire solution space was exhausted."
     },
     "orientations": [
@@ -48,7 +48,7 @@
           ],
           "exhaustive": true,
           "states": 3,
-          "elapsed_seconds": 0.002699799952097237,
+          "elapsed_seconds": 0.003148099989630282,
           "reason": "The entire solution space was exhausted."
         }
       },
@@ -69,7 +69,7 @@
           "solutions": [],
           "exhaustive": true,
           "states": 3,
-          "elapsed_seconds": 0.0006242000963538885,
+          "elapsed_seconds": 0.0006791999330744147,
           "reason": "The entire solution space was exhausted."
         }
       },
@@ -90,7 +90,7 @@
           "solutions": [],
           "exhaustive": true,
           "states": 1,
-          "elapsed_seconds": 0.0002642999170348048,
+          "elapsed_seconds": 0.00035820004995912313,
           "reason": "The entire solution space was exhausted."
         }
       },
@@ -111,7 +111,7 @@
           "solutions": [],
           "exhaustive": true,
           "states": 1,
-          "elapsed_seconds": 0.0002842999529093504,
+          "elapsed_seconds": 0.00029610004276037216,
           "reason": "The entire solution space was exhausted."
         }
       },
@@ -132,7 +132,7 @@
           "solutions": [],
           "exhaustive": true,
           "states": 3,
-          "elapsed_seconds": 0.0006295000202953815,
+          "elapsed_seconds": 0.000831299927085638,
           "reason": "The entire solution space was exhausted."
         }
       },
@@ -153,7 +153,7 @@
           "solutions": [],
           "exhaustive": true,
           "states": 1,
-          "elapsed_seconds": 0.0002960000419989228,
+          "elapsed_seconds": 0.000264400034211576,
           "reason": "The entire solution space was exhausted."
         }
       },
@@ -174,7 +174,7 @@
           "solutions": [],
           "exhaustive": true,
           "states": 11,
-          "elapsed_seconds": 0.002427399973385036,
+          "elapsed_seconds": 0.0020604999735951424,
           "reason": "The entire solution space was exhausted."
         }
       },
@@ -195,7 +195,7 @@
           "solutions": [],
           "exhaustive": true,
           "states": 1,
-          "elapsed_seconds": 0.0003027999773621559,
+          "elapsed_seconds": 0.00028570007998496294,
           "reason": "The entire solution space was exhausted."
         }
       }
@@ -208,7 +208,7 @@
       ],
       "exhaustive": false,
       "states": 44,
-      "elapsed_seconds": 0.011106900055892766,
+      "elapsed_seconds": 0.010765299899503589,
       "reason": "At least 2 distinct solutions were found."
     },
     "without_each_line": [
@@ -222,7 +222,7 @@
           ],
           "exhaustive": false,
           "states": 14,
-          "elapsed_seconds": 0.004922899999655783,
+          "elapsed_seconds": 0.0047685999888926744,
           "reason": "At least 2 distinct solutions were found."
         }
       },
@@ -236,7 +236,7 @@
           ],
           "exhaustive": false,
           "states": 23,
-          "elapsed_seconds": 0.006608100025914609,
+          "elapsed_seconds": 0.006411899928934872,
           "reason": "At least 2 distinct solutions were found."
         }
       },
@@ -250,7 +250,7 @@
           ],
           "exhaustive": false,
           "states": 3,
-          "elapsed_seconds": 0.004727700026705861,
+          "elapsed_seconds": 0.004566700081340969,
           "reason": "At least 2 distinct solutions were found."
         }
       }
@@ -267,7 +267,7 @@
           ],
           "exhaustive": false,
           "states": 3,
-          "elapsed_seconds": 0.004656299948692322,
+          "elapsed_seconds": 0.004377100034616888,
           "reason": "At least 2 distinct solutions were found."
         }
       },
@@ -282,7 +282,7 @@
           ],
           "exhaustive": false,
           "states": 7,
-          "elapsed_seconds": 0.003469599992968142,
+          "elapsed_seconds": 0.003387299948371947,
           "reason": "At least 2 distinct solutions were found."
         }
       },
@@ -297,7 +297,7 @@
           ],
           "exhaustive": false,
           "states": 6,
-          "elapsed_seconds": 0.003478999948129058,
+          "elapsed_seconds": 0.0033682999201118946,
           "reason": "At least 2 distinct solutions were found."
         }
       },
@@ -312,7 +312,7 @@
           ],
           "exhaustive": false,
           "states": 9,
-          "elapsed_seconds": 0.005022999946959317,
+          "elapsed_seconds": 0.005198600003495812,
           "reason": "At least 2 distinct solutions were found."
         }
       }

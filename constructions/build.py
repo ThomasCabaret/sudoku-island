@@ -14,7 +14,7 @@ import struct
 from typing import Sequence
 import zlib
 
-from island_puzzles import CARD_HEIGHT, CARD_WIDTH, audit, load_parity, load_puzzle, render_svg, verify
+from island_puzzles import CARD_AUTHOR, CARD_HEIGHT, CARD_WIDTH, audit, load_parity, load_puzzle, render_svg, verify
 
 
 CATALOG = Path(__file__).resolve().parent
@@ -74,7 +74,7 @@ def _render_files(svg_path: Path) -> None:
                 with fitz.open() as pdf:
                     page = pdf.new_page(width=841.89, height=595.276)
                     page.show_pdf_page(fitz.Rect(18, 18, 823.89, 577.276), vector, 0)
-                    pdf.set_metadata({"title": svg_path.parent.name + " - puzzle", "author": "Sudoku Island project"})
+                    pdf.set_metadata({"title": svg_path.parent.name + " - puzzle", "author": CARD_AUTHOR})
                     pdf.save(svg_path.with_suffix(".pdf"), garbage=4, deflate=True)
 
 
@@ -116,8 +116,8 @@ def build(proposal: Path, *, check: bool = False) -> None:
     solution = {"schema_version": 1, "puzzle": "puzzle.json", "status": "UNIQUE", "grid": grid}
     solution_bytes = (json.dumps(solution, indent=2) + "\n").encode("utf-8")
     sources = {
-        "puzzle.svg": render_svg(lines, data.get("title", "Even Island"), parity=parity),
-        "solution.svg": render_svg(lines, data.get("title", "Even Island"), solution=grid, parity=parity),
+        "puzzle.svg": render_svg(lines, data.get("title", "Even Island"), parity=parity, verified_unique=True),
+        "solution.svg": render_svg(lines, data.get("title", "Even Island"), solution=grid, parity=parity, verified_unique=True),
     }
     if check:
         report = json.loads((proposal / "verification.json").read_text(encoding="utf-8"))

@@ -24,6 +24,8 @@ ALL_DIGITS = 511
 EVEN = sum(1 << (digit - 1) for digit in (2, 4, 6, 8))
 ODD = ALL_DIGITS ^ EVEN
 CARD_WIDTH, CARD_HEIGHT = 1280, 800
+CARD_AUTHOR = "Thomas Cabaret"
+CARD_DATE = "25 November 2026"
 UNITS = tuple(
     [tuple(r * 9 + c for c in range(9)) for r in range(9)]
     + [tuple(r * 9 + c for r in range(9)) for c in range(9)]
@@ -413,6 +415,7 @@ def render_svg(
     lines: Sequence[Line], title: str = "Even Island", *,
     solution: Sequence[Sequence[int]] | None = None,
     parity: Sequence[ParityMark] = (),
+    verified_unique: bool = False,
 ) -> str:
     """Landscape card: grid on the left, standalone English rules on the right."""
     from html import escape
@@ -467,7 +470,9 @@ def render_svg(
                 x, y = point(r * 9 + c)
                 parts.append(f'<text class="digit" x="{x - 8}" y="{y + 10}" font-family="Helvetica" font-size="29" fill="#172433">{digit}</text>')
     rules = ["Place the digits 1-9 once in each row, each column and each 3x3 box.",
-             "All cells containing an even digit (2, 4, 6 or 8) must be orthogonally connected."]
+             "All cells containing an even digit (2, 4, 6 or 8) must be orthogonally connected. "
+             "In other words, the even digits form a single connected island. "
+             "Only side-to-side contact counts; diagonal contact does not."]
     if parity:
         if all(mark.even for mark in parity):
             rules.append("Blue squares contain even digits.")
@@ -495,12 +500,15 @@ def render_svg(
         y += 14
     if y > 686:
         raise ValueError("Too many rules for the landscape card")
-    notes = ["Line segments may connect cells diagonally.",
-             "Even cells connect through sides, never diagonally."]
+    notes = ["Line segments may connect cells diagonally."]
     if solution is not None:
         notes.append("Shaded cells contain even digits.")
     for i, note in enumerate(notes):
         parts.append(f'<text x="704" y="{704 + i * 22}" font-family="Helvetica" font-size="14" fill="#536170">{note}</text>')
+    parts.append('<path d="M 48 752 H 1232" stroke="#dce3e9" stroke-width="1"/>')
+    parts.append(f'<text x="48" y="776" font-family="Helvetica" font-size="12" fill="#536170">{CARD_AUTHOR} | {CARD_DATE}</text>')
+    publication = "Procedurally generated." + (" Guaranteed unique solution." if verified_unique else "")
+    parts.append(f'<text x="704" y="776" font-family="Helvetica" font-size="12" fill="#536170">{publication}</text>')
     return "\n".join(parts + ["</svg>", ""])
 
 
@@ -529,7 +537,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             data, lines = load_puzzle(args.puzzle)
             parity = load_parity(data)
             if args.command == "render":
-                args.output.write_text(render_svg(lines, data.get("title", "Even Island"), parity=parity), encoding="utf-8")
+                unique = verify(lines, parity=parity).status == "UNIQUE"
+                args.output.write_text(render_svg(lines, data.get("title", "Even Island"), parity=parity,
+                                                 verified_unique=unique), encoding="utf-8")
                 print(f"Wrote blank puzzle to {args.output}")
                 return 0
             if args.audit and (args.timeout is not None or args.without_island or args.limit != 2):

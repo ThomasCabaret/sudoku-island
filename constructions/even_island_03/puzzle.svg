@@ -25,13 +25,18 @@
 <text x="730" y="286" font-family="Helvetica" font-size="17" fill="#172433">column and each 3x3 box.</text>
 <text x="704" y="323" font-family="Helvetica" font-size="17" fill="#172433">2.</text>
 <text x="730" y="323" font-family="Helvetica" font-size="17" fill="#172433">All cells containing an even digit (2, 4, 6 or 8)</text>
-<text x="730" y="346" font-family="Helvetica" font-size="17" fill="#172433">must be orthogonally connected.</text>
-<text x="704" y="383" font-family="Helvetica" font-size="17" fill="#172433">3.</text>
-<text x="730" y="383" font-family="Helvetica" font-size="17" fill="#172433">Digits strictly increase along each grey</text>
-<text x="730" y="406" font-family="Helvetica" font-size="17" fill="#172433">thermometer, from its bulb to its tip.</text>
-<text x="704" y="443" font-family="Helvetica" font-size="17" fill="#172433">4.</text>
-<text x="730" y="443" font-family="Helvetica" font-size="17" fill="#172433">On green lines, adjacent digits differ by at</text>
-<text x="730" y="466" font-family="Helvetica" font-size="17" fill="#172433">least 5.</text>
+<text x="730" y="346" font-family="Helvetica" font-size="17" fill="#172433">must be orthogonally connected. In other words,</text>
+<text x="730" y="369" font-family="Helvetica" font-size="17" fill="#172433">the even digits form a single connected island.</text>
+<text x="730" y="392" font-family="Helvetica" font-size="17" fill="#172433">Only side-to-side contact counts; diagonal</text>
+<text x="730" y="415" font-family="Helvetica" font-size="17" fill="#172433">contact does not.</text>
+<text x="704" y="452" font-family="Helvetica" font-size="17" fill="#172433">3.</text>
+<text x="730" y="452" font-family="Helvetica" font-size="17" fill="#172433">Digits strictly increase along each grey</text>
+<text x="730" y="475" font-family="Helvetica" font-size="17" fill="#172433">thermometer, from its bulb to its tip.</text>
+<text x="704" y="512" font-family="Helvetica" font-size="17" fill="#172433">4.</text>
+<text x="730" y="512" font-family="Helvetica" font-size="17" fill="#172433">On green lines, adjacent digits differ by at</text>
+<text x="730" y="535" font-family="Helvetica" font-size="17" fill="#172433">least 5.</text>
 <text x="704" y="704" font-family="Helvetica" font-size="14" fill="#536170">Line segments may connect cells diagonally.</text>
-<text x="704" y="726" font-family="Helvetica" font-size="14" fill="#536170">Even cells connect through sides, never diagonally.</text>
+<path d="M 48 752 H 1232" stroke="#dce3e9" stroke-width="1"/>
+<text x="48" y="776" font-family="Helvetica" font-size="12" fill="#536170">Thomas Cabaret | 25 November 2026</text>
+<text x="704" y="776" font-family="Helvetica" font-size="12" fill="#536170">Procedurally generated. Guaranteed unique solution.</text>
 </svg>
