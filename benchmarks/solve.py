@@ -169,6 +169,24 @@ def add_tree_connectivity(engine, even, neighbors, max_selected: int, root_candi
             z3.And(even[j], z3.ULT(rank[j], rank[cell])) for j in neighbors[cell]])))
 
 
+def load_instance(path: Path) -> tuple[dict, tuple, dict[int, int], bool]:
+    """Accept published island cards or an explicitly marked classic benchmark.
+
+    Classic givens are 81 ASCII digits in row-major order, zero for an empty
+    cell. This does not broaden the zero-given construction/card format.
+    """
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if data.get("variant") != "classic":
+        data, lines = load_puzzle(path)
+        return data, lines, {}, True
+    encoded = data.get("givens")
+    if (data.get("schema_version") != 1 or not isinstance(encoded, str)
+            or len(encoded) != 81 or any(c not in "0123456789" for c in encoded)
+            or data.get("lines", []) or data.get("parity", [])):
+        raise ValueError("Classic benchmarks require 81 digits (0 for blanks), no lines or parity marks")
+    return data, (), {cell: int(digit) for cell, digit in enumerate(encoded) if digit != "0"}, False
+
+
 def solve(path: Path, method: str, seconds: float, *, proof_seconds: float | None = None,
           progress: Callable[[dict], None] | None = None) -> dict:
     """Find a witness, then continue the same search until unique/multiple/timeout.
@@ -180,7 +198,7 @@ def solve(path: Path, method: str, seconds: float, *, proof_seconds: float | Non
         raise ValueError("Expected a known method and a positive finite time budget")
     if proof_seconds is not None and (not math.isfinite(proof_seconds) or proof_seconds <= 0):
         raise ValueError("The separate uniqueness budget must be positive and finite")
-    data, lines = load_puzzle(path)
+    data, lines, givens, island = load_instance(path)
     parity = load_parity(data)
     started, cpu_started = perf_counter(), process_time()
     deadline = started + seconds
@@ -194,6 +212,7 @@ def solve(path: Path, method: str, seconds: float, *, proof_seconds: float | Non
     def snapshot(status: str) -> dict:
         elapsed = perf_counter()-started
         return {"method": method, "title": data["title"], "status": status,
+                "variant": "even-island" if island else "classic", "given_count": len(givens),
                 "exhaustive": exhaustive, "reason": reason,
                 "phase": "find_solution" if first_seconds is None else "prove_uniqueness",
                 "budget_seconds": seconds, "proof_budget_seconds": proof_seconds,
@@ -213,7 +232,8 @@ def solve(path: Path, method: str, seconds: float, *, proof_seconds: float | Non
     def accept(digits: tuple[int, ...]) -> None:
         nonlocal first_seconds, first_states, deadline
         grid = tuple(tuple(digits[9*r:9*r+9]) for r in range(9))
-        if not validate_solution(grid, lines, parity=parity):
+        if (not validate_solution(grid, lines, island=island, parity=parity)
+                or any(digits[cell] != digit for cell, digit in givens.items())):
             raise RuntimeError("Independent rule validator rejected a witness")
         encoded = "".join(map(str, digits))
         if encoded in solutions:
@@ -232,10 +252,15 @@ def solve(path: Path, method: str, seconds: float, *, proof_seconds: float | Non
     try:
         if method.startswith("csp"):
             domains = [ALL_DIGITS] * 81
+            for cell, digit in givens.items():
+                domains[cell] = 1 << (digit-1)
             for mark in parity:
                 domains[mark.cell] &= EVEN if mark.even else ODD
 
             def leaf(digits):
+                if not island:
+                    accept(digits)
+                    return
                 stats["connectivity_checks"] += 1
                 even_cells = {i for i, digit in enumerate(digits) if digit % 2 == 0}
                 if len(components(even_cells)) == 1:
@@ -245,7 +270,7 @@ def solve(path: Path, method: str, seconds: float, *, proof_seconds: float | Non
 
             _enumerate(domains, tuple((unit, ALL_DIGITS) for unit in UNITS),
                        lines, leaf, stats, lambda: deadline,
-                       (lambda d: connectivity_filter(d, stats)) if method == "csp-graph" else None)
+                       (lambda d: connectivity_filter(d, stats)) if island and method == "csp-graph" else None)
             exhaustive = True
         else:
             import z3
@@ -254,15 +279,18 @@ def solve(path: Path, method: str, seconds: float, *, proof_seconds: float | Non
             engine = z3.SolverFor("QF_FD")
             engine.set(random_seed=0, threads=1)
             x = [[z3.Bool(f"x_{cell}_{digit}") for digit in range(1, 10)] for cell in range(81)]
-            even = [z3.Bool(f"even_{cell}") for cell in range(81)]
+            even = [z3.Bool(f"even_{cell}") for cell in range(81)] if island else []
             for cell in range(81):
                 engine.add(z3.PbEq([(v, 1) for v in x[cell]], 1))
-                engine.add(even[cell] == z3.Or([x[cell][d-1] for d in (2, 4, 6, 8)]))
+                if island:
+                    engine.add(even[cell] == z3.Or([x[cell][d-1] for d in (2, 4, 6, 8)]))
             for unit in UNITS:
                 for digit in range(9):
                     engine.add(z3.PbEq([(x[cell][digit], 1) for cell in unit], 1))
             for mark in parity:
                 engine.add(even[mark.cell] if mark.even else z3.Not(even[mark.cell]))
+            for cell, digit in givens.items():
+                engine.add(x[cell][digit-1])
             for line in lines:
                 if line.kind == "renban":
                     engine.add(z3.Or([
@@ -277,7 +305,7 @@ def solve(path: Path, method: str, seconds: float, *, proof_seconds: float | Non
                                      else abs(a-b) < line.difference)]
                 for a, b in pairs:
                     engine.add([z3.Or(z3.Not(x[a][da]), z3.Not(x[b][db])) for da, db in forbidden])
-            if method == "sat-tree":
+            if island and method == "sat-tree":
                 add_tree_connectivity(engine, even, NEIGHBORS, 36, range(9))
             stats.update(sat_calls=0, connectivity_cuts=0)
             while True:
@@ -299,6 +327,11 @@ def solve(path: Path, method: str, seconds: float, *, proof_seconds: float | Non
                 model = engine.model()
                 digits = tuple(next(d+1 for d in range(9) if z3.is_true(model.eval(x[cell][d])))
                                for cell in range(81))
+                if not island:
+                    accept(digits)
+                    engine.add(z3.Or([z3.Not(x[cell][d-1]) for cell, d in enumerate(digits)]))
+                    publish()
+                    continue
                 parts = components({i for i, d in enumerate(digits) if d % 2 == 0})
                 stats["connectivity_checks"] += 1
                 if len(parts) == 1:

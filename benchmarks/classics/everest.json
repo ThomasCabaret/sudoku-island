@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "variant": "classic",
+  "title": "Everest (Inkala)",
+  "givens": "800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+  "rules": ["Place digits 1-9 once each in every row, column and 3x3 box."],
+  "lines": [],
+  "parity": [],
+  "source": {
+    "creator": "Arto Inkala",
+    "url": "https://www.sudokuwiki.org/Arto_Inkala_Sudoku",
+    "grid_url": "https://www.sudokuwiki.org/sudoku.htm?bd=800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+    "checked_on": "2026-11-25",
+    "note": "The 21-given Inkala grid publicized in 2012, commonly called Everest. The title identifies the grid, without claiming a definitive hardest-puzzle ranking or an original publication date."
+  }
+}

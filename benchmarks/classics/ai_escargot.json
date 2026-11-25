@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "variant": "classic",
+  "title": "AI Escargot",
+  "givens": "100007090030020008009600500005300900010080002600004000300000010040000007007000300",
+  "rules": ["Place digits 1-9 once each in every row, column and 3x3 box."],
+  "lines": [],
+  "parity": [],
+  "source": {
+    "creator": "Arto Inkala",
+    "url": "https://www.sudokuwiki.org/Escargot",
+    "grid_url": "https://www.sudokuwiki.org/sudoku.htm?bd=100007090030020008009600500005300900010080002600004000300000010040000007007000300",
+    "checked_on": "2026-11-25",
+    "note": "Corrected 23-given version. No extra 1 at r8c3. Corroborated by Figure 2 of Henz and Truong, SUDOKUSAT (2009)."
+  }
+}

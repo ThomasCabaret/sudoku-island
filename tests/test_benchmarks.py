@@ -12,7 +12,7 @@ from unittest import mock
 
 from benchmarks.run import render_report
 from benchmarks.solve import (
-    METHODS, NEIGHBORS, add_tree_connectivity, components, connectivity_filter, required_bridges, solve,
+    METHODS, NEIGHBORS, add_tree_connectivity, components, connectivity_filter, load_instance, required_bridges, solve,
 )
 from island_puzzles import ALL_DIGITS, EVEN, ODD
 
@@ -174,6 +174,41 @@ class RuleOnlySolverTests(unittest.TestCase):
             self.assertFalse(result["exhaustive"])
             self.assertEqual(result["solutions"], [])
             self.assertIsNone(result["first_solution_seconds"])
+
+    def test_classic_givens_and_no_implicit_connectivity_constraint(self):
+        # This valid Sudoku has disconnected even cells. It must still be
+        # accepted under classic rules by every configuration, including tree.
+        grid = "".join(str((r*3+r//3+c) % 9+1) for r in range(9) for c in range(9))
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "classic.json"
+            for method in self.available_methods():
+                for status, givens in (("UNIQUE", grid), ("UNSAT", "11"+grid[2:]),
+                                       ("MULTIPLE", "1"+"0"*80)):
+                    data = {"schema_version": 1, "variant": "classic", "title": "Fixture", "givens": givens}
+                    path.write_text(json.dumps(data), encoding="utf-8")
+                    result = solve(path, method, 10, proof_seconds=10)
+                    self.assertEqual(result["status"], status, (method, status))
+                    self.assertEqual(result["metrics"]["connectivity_checks"], 0)
+                    if status == "UNIQUE":
+                        self.assertEqual(result["solutions"], [grid])
+                    self.assertTrue(all(solution[0] == "1" for solution in result["solutions"]))
+
+    def test_classic_input_rejects_malformed_givens_or_hidden_variant_clues(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "classic.json"
+            for givens, lines in (("0"*80, []), ("0"*80+"x", []), ("0"*81, [{"kind": "thermometer"}])):
+                path.write_text(json.dumps({"schema_version": 1, "variant": "classic", "givens": givens,
+                                            "lines": lines}), encoding="utf-8")
+                with self.assertRaises(ValueError):
+                    load_instance(path)
+        counts = {"ai_escargot": 23, "everest": 21, "golden_nugget": 21, "platinum_blonde": 21}
+        for name, count in counts.items():
+            data, lines, givens, island = load_instance(ROOT / f"benchmarks/classics/{name}.json")
+            self.assertEqual(len(givens), count)
+            self.assertFalse(island)
+            self.assertEqual(lines, ())
+        data, _, givens, _ = load_instance(ROOT / "benchmarks/classics/ai_escargot.json")
+        self.assertNotIn(65, givens)  # r8c3: corrected AI Escargot has no extra 1.
 
     def test_report_keeps_censored_timings_and_different_work_units(self):
         rows = [{"puzzle": "a", "method": method, "status": "UNKNOWN", "solutions": [],

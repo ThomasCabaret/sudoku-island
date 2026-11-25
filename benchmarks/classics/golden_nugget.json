@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "variant": "classic",
+  "title": "Golden Nugget",
+  "givens": "000000039000001005003050800008090006070002000100400000009080050020000600400700000",
+  "rules": ["Place digits 1-9 once each in every row, column and 3x3 box."],
+  "lines": [],
+  "parity": [],
+  "source": {
+    "creator": "tarek",
+    "url": "https://isabelle.in.tum.de/library/HOL/HOL-ex/Sudoku.html",
+    "cross_reference": "https://www.sudokusnake.com/goldennugget.php",
+    "checked_on": "2026-11-25",
+    "note": "Coordinates follow the explicitly labeled Golden Nugget in Tjark Weber's Isabelle theory. Sudoku Snake swaps columns 5 and 6; that equivalent presentation is not substituted here."
+  }
+}

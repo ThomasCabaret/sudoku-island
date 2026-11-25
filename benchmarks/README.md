@@ -7,6 +7,11 @@ For longer unattended searches, see the [offline SAT campaign](#offline-sat-camp
 The 30-second report is a historical measurement; it is not overwritten by a
 campaign or silently updated to measurements from a newer solver version.
 
+The [classic reference comparison](classics/README.md) measures AI Escargot,
+Golden Nugget, Platinum Blonde and Everest with their original numeric clues.
+It also archives all eight completed rule-only SAT island proofs from the
+offline campaign. Classic mode imposes no connected-even rule.
+
 The purpose is to measure automatic solving effort when the **printed statement
 is the only mathematical input**. The fast construction verifier is unsuitable
 for this question: it imports the independently proved eight island masks.
@@ -60,6 +65,14 @@ Every accepted grid is checked independently against Sudoku units, line clues,
 printed parity marks and an actual orthogonal flood fill. A timeout is UNKNOWN,
 even if a first witness has been found. Nothing is inferred from the published
 solution. The separate, much faster theorem-based uniqueness audits remain valid.
+
+An explicitly marked `variant: "classic"` benchmark may instead contain an
+81-digit `givens` string, with zero for blanks and no lines or parity marks.
+Only the benchmark adapter accepts this format; the construction/card format
+still requires no numeric givens. Classic solutions must respect every given,
+and the whole-grid validator checks ordinary Sudoku without island connectivity.
+Without that rule, the two CSP configurations coincide, as do the two SAT
+encodings; the classic comparison measures one representative of each family.
 
 The graph propagation is sound: a final connected even set must lie in a single
 possible-even component and contain each already required even cell. Its size

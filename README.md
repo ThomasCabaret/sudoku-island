@@ -67,6 +67,11 @@ mask or expected solution. The [results table](benchmarks/report.md) records
 first-solution effort, uniqueness status, search counters and peak process
 memory, with explicit timeouts rather than inferred difficulty ratings.
 
+The [classic reference comparison](benchmarks/classics/README.md) benchmarks
+AI Escargot, Golden Nugget, Platinum Blonde and Everest using only their numeric
+givens and ordinary Sudoku rules. It includes the finished island SAT campaign
+for an automatic-search comparison, with the different run protocols stated.
+
 For unattended searches, `start_campaign.bat` launches both SAT connectivity
 encodings on all four statements, with separate 30-minute first-solution and
 uniqueness budgets. Open **`campaign_status.bat`** for live progress; closing

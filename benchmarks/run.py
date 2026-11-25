@@ -19,8 +19,8 @@ import sys
 import tempfile
 from time import perf_counter
 
-from benchmarks.solve import METHODS
-from island_puzzles import load_parity, load_puzzle, validate_solution
+from benchmarks.solve import METHODS, load_instance
+from island_puzzles import load_parity, validate_solution
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = ("benchmarks/solve.py", "benchmarks/run.py", "island_puzzles.py",
@@ -51,14 +51,15 @@ def render_report(report: dict) -> str:
     trials, budget = report["trials"], report["configuration"]["seconds"]
     count = report["configuration"]["repeats"]
     env = report["environment"]
+    classic = any(p.get("variant") == "classic" for p in report["puzzles"])
     lines = [
         "# Rule-only solver benchmark", "",
-        "These solvers receive only each published `puzzle.json`: Sudoku rules,",
-        "line clues, printed parity marks and orthogonal even-cell connectivity.",
+        "These solvers receive only each input statement: Sudoku rules and its",
+        "printed clues; even-cell connectivity is enforced only for island puzzles.",
         "They do **not** receive the island theorem, eight orientations, a fixed",
         "parity mask, the expected filling or construction/removal certificates.", "",
         f"Recorded at {report['recorded_at_utc']}. {count} fresh-process runs per cell,",
-        f"a {budget:g} s wall-time budget per run, sequential execution, shuffled order",
+        f"a {budget:g} s initial wall-time budget per run, sequential execution, shuffled order",
         "with seed 0. Values below are medians; raw trials include all counters.",
         "The search first seeks one solution, then continues to prove uniqueness.",
         "The uniqueness time includes the first-solution phase.", "",
@@ -68,6 +69,18 @@ def render_report(report: dict) -> str:
         "| Puzzle | Method | First solution (s) | Uniqueness | Search work | Peak MiB | CPU s |",
         "|---|---|---:|---|---:|---:|---:|",
     ]
+    if classic and all(p.get("variant") == "classic" for p in report["puzzles"]):
+        lines[2:7] = ["These are ordinary classic Sudokus with printed numeric givens.",
+                      "No even-island rule, parity pattern or variant clue is imposed.",
+                      "CSP and SAT use the same search engines as the island benchmarks,",
+                      "with only the applicable statement constraints enabled.", ""]
+    if report["configuration"].get("proof_seconds") is not None:
+        at = lines.index("The uniqueness time includes the first-solution phase.")
+        lines[at] = (f"Uniqueness gets a separate {report['configuration']['proof_seconds']:g} s budget; "
+                     "the table reports its additional time after the first solution.")
+        column = lines.index("| Puzzle | Method | First solution (s) | Uniqueness | Search work | Peak MiB | CPU s |")
+        lines[column] = (
+            "| Puzzle | Method | First solution (s) | Additional uniqueness | Search work | Peak MiB | CPU s |")
     for puzzle in report["puzzles"]:
         for method in report["configuration"]["methods"]:
             rows = [row for row in trials if row["puzzle"] == puzzle["path"] and row["method"] == method]
@@ -75,9 +88,13 @@ def render_report(report: dict) -> str:
             first = f"{median(found):.3f} ({len(found)}/{count})" if found else f">{budget:g} (0/{count})"
             statuses = {row["status"] for row in rows}
             if statuses == {"UNIQUE"}:
-                proof = f"{median_metric(rows, 'elapsed_seconds'):.3f} s ({count}/{count})"
+                key = "uniqueness_search_seconds" if report["configuration"].get("proof_seconds") is not None else "elapsed_seconds"
+                proof = f"{median_metric(rows, key):.3f} s ({count}/{count})"
             elif statuses == {"UNKNOWN"}:
-                proof = f"UNKNOWN at {budget:g} s"
+                extra_budget = report["configuration"].get("proof_seconds")
+                proof = (f"UNKNOWN at {budget:g} s" if extra_budget is None else
+                         f"UNKNOWN; proof budget {extra_budget:g} s" if found else
+                         "UNKNOWN; no first solution")
             else:
                 proof = ", ".join(f"{s}: {sum(r['status']==s for r in rows)}/{count}" for s in sorted(statuses))
             if method.startswith("csp"):
@@ -130,15 +147,16 @@ def run(args) -> dict:
     puzzles = []
     for path in args.puzzles:
         path = path.resolve()
-        data, _ = load_puzzle(path)
+        data, _, givens, island = load_instance(path)
         puzzles.append({"path": path.relative_to(ROOT).as_posix(), "title": data["title"],
+                        "variant": "even-island" if island else "classic", "given_count": len(givens),
                         "sha256_lf": digest(path)})
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip())
     report = {"schema_version": 1, "recorded_at_utc": datetime.now(timezone.utc).isoformat(),
               "source_base_revision": revision, "source_worktree_dirty": dirty,
               "source_sha256_lf": {name: digest(ROOT / name) for name in SOURCES},
-              "configuration": {"seconds": args.seconds, "repeats": args.repeats,
+              "configuration": {"seconds": args.seconds, "proof_seconds": args.proof_seconds, "repeats": args.repeats,
                                 "methods": list(args.methods), "order_seed": 0,
                                 "parallel_workers": 1, "python_hash_seed": 0},
               "environment": {"platform": platform.platform(), "python": platform.python_version(),
@@ -158,11 +176,13 @@ def run(args) -> dict:
             output.unlink(missing_ok=True)
             command = [sys.executable, "-m", "benchmarks.solve", puzzle["path"],
                        "--method", method, "--seconds", str(args.seconds), "--output", str(output)]
+            if args.proof_seconds is not None:
+                command.extend(["--proof-seconds", str(args.proof_seconds)])
             started = perf_counter()
             try:
                 completed = subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
                                            env={**os.environ, "PYTHONHASHSEED": "0"},
-                                           timeout=args.seconds+10, check=True)
+                                           timeout=args.seconds+(args.proof_seconds or 0)+10, check=True)
             except subprocess.TimeoutExpired as exc:
                 # subprocess.run kills and waits for its own worker before raising.
                 raise RuntimeError(f"Worker exceeded hard limit: {command}") from exc
@@ -173,10 +193,11 @@ def run(args) -> dict:
             row = json.loads(output.read_text(encoding="utf-8"))
             row.update(puzzle=puzzle["path"], repeat=repeat, process_wall_seconds=perf_counter()-started)
             # Post-run validation only. The worker never reads solution.json.
-            data, lines = load_puzzle(ROOT / puzzle["path"])
+            data, lines, givens, island = load_instance(ROOT / puzzle["path"])
             for encoded in row["solutions"]:
                 grid = tuple(tuple(map(int, encoded[r*9:r*9+9])) for r in range(9))
-                if not validate_solution(grid, lines, parity=load_parity(data)):
+                if (not validate_solution(grid, lines, island=island, parity=load_parity(data))
+                        or any(grid[cell//9][cell%9] != digit for cell, digit in givens.items())):
                     raise RuntimeError("Post-run rule validation failed")
             report["trials"].append(row)
             if row["engine_version"]:
@@ -197,6 +218,7 @@ def run(args) -> dict:
     buffer = io.StringIO(newline="")
     fields = ("puzzle", "method", "repeat", "status", "exhaustive", "elapsed_seconds", "cpu_seconds",
               "first_solution_seconds", "first_solution_states", "peak_process_mib", "process_wall_seconds",
+              "uniqueness_search_seconds", "variant", "given_count",
               "states", "sat_decisions", "sat_conflicts", "sat_calls", "connectivity_checks", "connectivity_cuts",
               "rejected_complete_grids", "solution_count")
     writer = csv.DictWriter(buffer, fieldnames=fields)
@@ -218,11 +240,14 @@ def main() -> None:
                         default=sorted((ROOT / "constructions").glob("even_island_*/puzzle.json")))
     parser.add_argument("--methods", nargs="+", choices=METHODS, default=METHODS)
     parser.add_argument("--seconds", type=float, default=30)
+    parser.add_argument("--proof-seconds", type=float)
     parser.add_argument("--repeats", type=int, default=2)
     parser.add_argument("--output", type=Path, default=ROOT / "benchmarks")
     args = parser.parse_args()
     if not math.isfinite(args.seconds) or args.seconds <= 0 or args.repeats < 1:
         parser.error("Use a positive finite time budget and at least one repeat")
+    if args.proof_seconds is not None and (not math.isfinite(args.proof_seconds) or args.proof_seconds <= 0):
+        parser.error("The separate uniqueness budget must be positive and finite")
     if len(set(args.methods)) != len(args.methods):
         parser.error("Methods cannot be repeated")
     run(args)
