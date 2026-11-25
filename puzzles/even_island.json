@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "title": "Even Island",
+  "givens": [],
+  "rules": [
+    "Place digits 1-9 once each in every row, column and 3x3 box.",
+    "All cells containing an even digit form one island connected through cell sides.",
+    "Digits strictly increase along each thermometer from its bulb to its tip.",
+    "Lines may connect cells diagonally; diagonal contact does not connect even cells."
+  ],
+  "coordinate_convention": "One-based [row, column]; the first cell of each thermometer is its bulb.",
+  "lines": [
+    {"kind": "thermometer", "cells": [[7, 4], [6, 4], [5, 5], [5, 6]]},
+    {"kind": "thermometer", "cells": [[9, 3], [8, 3], [7, 2], [6, 1], [7, 1], [8, 2]]},
+    {"kind": "thermometer", "cells": [[3, 3], [2, 4], [3, 5], [2, 5], [2, 6], [3, 6]]},
+    {"kind": "thermometer", "cells": [[5, 8], [5, 9], [4, 8], [3, 9]]}
+  ]
+}

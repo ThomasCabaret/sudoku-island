@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sudoku-island"
-version = "1.0.0"
+version = "1.1.0"
 description = "Exact search for connected binary Sudoku patterns, with an even-digit completion"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -12,6 +12,7 @@ dependencies = []
 
 [project.scripts]
 sudoku-island = "sudoku_island:main"
+sudoku-island-puzzles = "island_puzzles:main"
 
 [tool.setuptools]
-py-modules = ["sudoku_island", "sudoku_completion"]
+py-modules = ["sudoku_island", "sudoku_completion", "island_puzzles"]

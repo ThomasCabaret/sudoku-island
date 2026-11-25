@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="630" height="700" viewBox="0 0 630 700">
+<rect width="630" height="700" fill="white"/>
+<text x="315" y="28" text-anchor="middle" font-family="sans-serif" font-size="22">Even Island</text>
+<path d="M 48 48 H 534 M 48 48 V 534" stroke="#333" stroke-width="3"/>
+<path d="M 48 102 H 534 M 102 48 V 534" stroke="#333" stroke-width="1"/>
+<path d="M 48 156 H 534 M 156 48 V 534" stroke="#333" stroke-width="1"/>
+<path d="M 48 210 H 534 M 210 48 V 534" stroke="#333" stroke-width="3"/>
+<path d="M 48 264 H 534 M 264 48 V 534" stroke="#333" stroke-width="1"/>
+<path d="M 48 318 H 534 M 318 48 V 534" stroke="#333" stroke-width="1"/>
+<path d="M 48 372 H 534 M 372 48 V 534" stroke="#333" stroke-width="3"/>
+<path d="M 48 426 H 534 M 426 48 V 534" stroke="#333" stroke-width="1"/>
+<path d="M 48 480 H 534 M 480 48 V 534" stroke="#333" stroke-width="1"/>
+<path d="M 48 534 H 534 M 534 48 V 534" stroke="#333" stroke-width="3"/>
+<polyline points="237,399 237,345 291,291 345,291" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="237" cy="399" r="18" fill="#c4ccd4"/>
+<polyline points="183,507 183,453 129,399 75,345 75,399 129,453" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="183" cy="507" r="18" fill="#c4ccd4"/>
+<polyline points="183,183 237,129 291,183 291,129 345,129 345,183" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="183" cy="183" r="18" fill="#c4ccd4"/>
+<polyline points="453,291 507,291 453,237 507,183" fill="none" stroke="#c4ccd4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="453" cy="291" r="18" fill="#c4ccd4"/>
+<text x="48" y="576" font-family="sans-serif" font-size="14">Place 1-9 once in every row, column and 3x3 box.</text>
+<text x="48" y="600" font-family="sans-serif" font-size="14">All even digits form one island connected through cell sides.</text>
+<text x="48" y="624" font-family="sans-serif" font-size="14">Digits strictly increase from each thermometer bulb to its tip.</text>
+<text x="48" y="676" font-family="sans-serif" font-size="12" fill="#555">No given digits. Diagonal contact does not connect even cells.</text>
+</svg>

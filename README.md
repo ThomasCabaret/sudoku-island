@@ -16,6 +16,37 @@ searched one hardcoded quota using cell assignments and a rollback data
 structure. This version uses a smaller row-frontier search, searches the minimum
 automatically, and distinguishes completed searches from interrupted ones.
 
+## A zero-given puzzle
+
+The next stage is now available: [**Even Island**](puzzles/even_island.pdf),
+a Sudoku with **four thermometers, no given digits, and exactly one solution**.
+All even digits must form a side-connected island, and digits strictly
+increase along each thermometer from its bulb. The four paths use 20 distinct
+cells, without overlaps or crossings.
+
+![Even Island puzzle](puzzles/even_island.svg)
+
+The uniqueness check considers all eight island orientations and all digit
+fillings. Removing the island rule, removing any thermometer, or trimming
+either end of any thermometer gives multiple solutions. This establishes
+local irreducibility; it does not prove that three different lines cannot work.
+Human difficulty and a satisfying manual solve path still need playtesting.
+
+The unrestricted connected-even rule admits **318,563,942,400** filled Sudokus.
+Difference-only clues cannot remove the complementary solutions related by
+`d -> 10-d`, which preserves parity and absolute differences. Thermometers
+break this symmetry. See the [full freedom analysis and construction method](docs/puzzle-design.md)
+and [recorded verification](docs/puzzle-analysis.json).
+
+```sh
+python island_puzzles.py analyze
+python island_puzzles.py verify puzzles/even_island.json --audit
+python island_puzzles.py render puzzles/even_island.json output/even_island.svg
+```
+
+Create `output/` first when rendering there. These commands use only the
+Python standard library. The printable PDF is supplied ready to share.
+
 ## Run
 
 Python **3.10 or newer**, with **no runtime dependencies**. From this directory:
@@ -183,6 +214,8 @@ runs the tests on Python 3.10, 3.12 and 3.13 and exercises the installed command
 
 - `sudoku_island.py`: exact abstract solver, independent witness checker, CLI.
 - `sudoku_completion.py`: separate digit-placement search and Sudoku checker.
+- `island_puzzles.py`: exact digit counts, thermometer/whisper verifier, SVG renderer.
+- `puzzles/`: a blank, independently checked zero-given puzzle in JSON, SVG and PDF.
 - `tests/`: independent small-board oracles and regression tests.
 - `docs/`: completeness proof, compiled PDF and reference result.
 - `pyproject.toml`: optional installation and command entry point.

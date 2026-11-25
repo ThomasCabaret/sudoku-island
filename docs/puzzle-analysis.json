@@ -1,0 +1,465 @@
+{
+  "schema_version": 1,
+  "grid_encoding": "Each solution is an 81-character row-major digit string.",
+  "puzzle": "puzzles/even_island.json",
+  "freedom": {
+    "even_layer": {
+      "normalized_count": 704,
+      "digit_permutations": 24,
+      "labeled_count": 16896,
+      "states": 1411,
+      "elapsed_seconds": 0.08393079997040331,
+      "exhaustive": true
+    },
+    "odd_layer": {
+      "normalized_count": 19640,
+      "digit_permutations": 120,
+      "labeled_count": 2356800,
+      "states": 39287,
+      "elapsed_seconds": 3.598125800024718,
+      "exhaustive": true
+    },
+    "orientations": 8,
+    "per_orientation": 39820492800,
+    "total_grids": 318563942400,
+    "log2_total_grids": 38.212792024169026
+  },
+  "audit": {
+    "full": {
+      "status": "UNIQUE",
+      "solutions": [
+        "246813579839257146571649328395721864417968235628534791752486913184392657963175482"
+      ],
+      "exhaustive": true,
+      "states": 8,
+      "elapsed_seconds": 0.011640800046734512,
+      "reason": "The entire solution space was exhausted."
+    },
+    "orientations": [
+      {
+        "pattern": [
+          15,
+          393,
+          408,
+          464,
+          113,
+          39,
+          60,
+          102,
+          450
+        ],
+        "result": {
+          "status": "UNIQUE",
+          "solutions": [
+            "246813579839257146571649328395721864417968235628534791752486913184392657963175482"
+          ],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.0014973999932408333,
+          "reason": "The entire solution space was exhausted."
+        }
+      },
+      {
+        "pattern": [
+          51,
+          417,
+          225,
+          71,
+          92,
+          240,
+          408,
+          270,
+          270
+        ],
+        "result": {
+          "status": "UNSAT",
+          "solutions": [],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.0002506999298930168,
+          "reason": "The entire solution space was exhausted."
+        }
+      },
+      {
+        "pattern": [
+          135,
+          204,
+          120,
+          456,
+          284,
+          23,
+          51,
+          291,
+          480
+        ],
+        "result": {
+          "status": "UNSAT",
+          "solutions": [],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.00026400003116577864,
+          "reason": "The entire solution space was exhausted."
+        }
+      },
+      {
+        "pattern": [
+          225,
+          225,
+          51,
+          30,
+          116,
+          452,
+          270,
+          267,
+          408
+        ],
+        "result": {
+          "status": "UNSAT",
+          "solutions": [],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.0003250000299885869,
+          "reason": "The entire solution space was exhausted."
+        }
+      },
+      {
+        "pattern": [
+          270,
+          270,
+          408,
+          240,
+          92,
+          71,
+          225,
+          417,
+          51
+        ],
+        "result": {
+          "status": "UNSAT",
+          "solutions": [],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.0005233000265434384,
+          "reason": "The entire solution space was exhausted."
+        }
+      },
+      {
+        "pattern": [
+          408,
+          267,
+          270,
+          452,
+          116,
+          30,
+          51,
+          225,
+          225
+        ],
+        "result": {
+          "status": "UNSAT",
+          "solutions": [],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.0002462000120431185,
+          "reason": "The entire solution space was exhausted."
+        }
+      },
+      {
+        "pattern": [
+          450,
+          102,
+          60,
+          39,
+          113,
+          464,
+          408,
+          393,
+          15
+        ],
+        "result": {
+          "status": "UNSAT",
+          "solutions": [],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.0002410999732092023,
+          "reason": "The entire solution space was exhausted."
+        }
+      },
+      {
+        "pattern": [
+          480,
+          291,
+          51,
+          23,
+          284,
+          456,
+          120,
+          204,
+          135
+        ],
+        "result": {
+          "status": "UNSAT",
+          "solutions": [],
+          "exhaustive": true,
+          "states": 1,
+          "elapsed_seconds": 0.00025569996796548367,
+          "reason": "The entire solution space was exhausted."
+        }
+      }
+    ],
+    "without_island_rule": {
+      "status": "MULTIPLE",
+      "solutions": [
+        "428719356359246178761538294217964835934857612586321947645192783173685429892473561",
+        "428719356359246178761538294217964835936857412584321967645192783173485629892673541"
+      ],
+      "exhaustive": false,
+      "states": 33,
+      "elapsed_seconds": 0.008828999940305948,
+      "reason": "At least 2 distinct solutions were found."
+    },
+    "without_each_line": [
+      {
+        "removed_line": 1,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "246813579839257146571649328317925864495768213628134795752486931184392657963571482",
+            "246813579839257146571649328317925864495786213628134795752468931184392657963571482"
+          ],
+          "exhaustive": false,
+          "states": 11,
+          "elapsed_seconds": 0.003809699905104935,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "removed_line": 2,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "246813597839257146571649328395721864417968235628534719152486973784392651963175482",
+            "246813597839257146571649328395721864417968235628534719152486973984372651763195482"
+          ],
+          "exhaustive": false,
+          "states": 11,
+          "elapsed_seconds": 0.004307700088247657,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "removed_line": 3,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "824637951679851324153429786317965248295748613468312597536284179782196435941573862",
+            "824637951679851324315429786193765248257948613468312597536284179782196435941573862"
+          ],
+          "exhaustive": false,
+          "states": 16,
+          "elapsed_seconds": 0.005865500075742602,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "removed_line": 4,
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "246813579839257146571649328395721864417368295628594713752486931184932657963175482",
+            "246813579839257146571649328395721864417368295628594713752486931984132657163975482"
+          ],
+          "exhaustive": false,
+          "states": 8,
+          "elapsed_seconds": 0.00327440002001822,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      }
+    ],
+    "shortened_lines": [
+      {
+        "line": 1,
+        "removed_end": "bulb",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "246813579839257146571649328317925864495768213628134795752486931184392657963571482",
+            "246813579839257146571649328317985264495726813628134795752468931184392657963571482"
+          ],
+          "exhaustive": false,
+          "states": 11,
+          "elapsed_seconds": 0.004206800018437207,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 1,
+        "removed_end": "tip",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "246813579839257146571649328395721864417968235628534791752486913184392657963175482",
+            "246813579839257146571649328395721864417986235628534791752468913184392657963175482"
+          ],
+          "exhaustive": false,
+          "states": 7,
+          "elapsed_seconds": 0.003261599922552705,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 2,
+        "removed_end": "bulb",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "246813579839257146571649328395721864417968235628534791752486913184392657963175482",
+            "246813579893257146571649328935721864417968235628534791752486913184392657369175482"
+          ],
+          "exhaustive": false,
+          "states": 6,
+          "elapsed_seconds": 0.0028855999698862433,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 2,
+        "removed_end": "tip",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "246813579839257146571649328395721864417968235628534791752486913184392657963175482",
+            "246813597839257146571649328395721864417968235628534971952486713184372659763195482"
+          ],
+          "exhaustive": false,
+          "states": 3,
+          "elapsed_seconds": 0.002311500022187829,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 3,
+        "removed_end": "bulb",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "246813579839257146175649328593721864417968235628534791752486913384192657961375482",
+            "246813579839257146517649328375921864491768235628534791752486913184392657963175482"
+          ],
+          "exhaustive": false,
+          "states": 9,
+          "elapsed_seconds": 0.003999999957159162,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 3,
+        "removed_end": "tip",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "246819573839257146571643928395721864417968235628534719752486391184392657963175482",
+            "246819573839257146571643928395721864417968235628534791752486319184392657963175482"
+          ],
+          "exhaustive": false,
+          "states": 7,
+          "elapsed_seconds": 0.0035650000208988786,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 4,
+        "removed_end": "bulb",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "246813579839257146571649328395721864417368295628594713752486931184932657963175482",
+            "246813579839257146571649328395721864417368295628594713752486931984132657163975482"
+          ],
+          "exhaustive": false,
+          "states": 6,
+          "elapsed_seconds": 0.0029232000233605504,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      },
+      {
+        "line": 4,
+        "removed_end": "tip",
+        "result": {
+          "status": "MULTIPLE",
+          "solutions": [
+            "246813579839257146571649328395721864417968235628534791752486913184392657963175482",
+            "246813579839257146571649382395721468417968235628534791752486913184392657963175824"
+          ],
+          "exhaustive": false,
+          "states": 5,
+          "elapsed_seconds": 0.002603299915790558,
+          "reason": "At least 2 distinct solutions were found."
+        }
+      }
+    ],
+    "human_difficulty": "Not established by the uniqueness search."
+  },
+  "clue_stages": [
+    {
+      "lines_included": 1,
+      "surviving_orientations": 8,
+      "orientation_statuses": [
+        "MULTIPLE",
+        "MULTIPLE",
+        "MULTIPLE",
+        "MULTIPLE",
+        "MULTIPLE",
+        "MULTIPLE",
+        "MULTIPLE",
+        "MULTIPLE"
+      ]
+    },
+    {
+      "lines_included": 2,
+      "surviving_orientations": 4,
+      "orientation_statuses": [
+        "MULTIPLE",
+        "UNSAT",
+        "UNSAT",
+        "MULTIPLE",
+        "MULTIPLE",
+        "MULTIPLE",
+        "UNSAT",
+        "UNSAT"
+      ]
+    },
+    {
+      "lines_included": 3,
+      "surviving_orientations": 1,
+      "orientation_statuses": [
+        "MULTIPLE",
+        "UNSAT",
+        "UNSAT",
+        "UNSAT",
+        "UNSAT",
+        "UNSAT",
+        "UNSAT",
+        "UNSAT"
+      ],
+      "filled_grid_count": 60,
+      "count_exhaustive": true
+    },
+    {
+      "lines_included": 4,
+      "surviving_orientations": 1,
+      "orientation_statuses": [
+        "UNIQUE",
+        "UNSAT",
+        "UNSAT",
+        "UNSAT",
+        "UNSAT",
+        "UNSAT",
+        "UNSAT",
+        "UNSAT"
+      ],
+      "filled_grid_count": 1,
+      "count_exhaustive": true
+    }
+  ]
+}
