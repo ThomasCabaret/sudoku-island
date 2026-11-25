@@ -293,22 +293,35 @@ def audit(lines: Sequence[Line]) -> dict:
             "human_difficulty": "Not established by the uniqueness search."}
 
 
-def render_svg(lines: Sequence[Line], title: str = "Even Island") -> str:
-    """Render a blank puzzle. No solution digits or parity shading are included."""
+def render_svg(
+    lines: Sequence[Line], title: str = "Even Island", *,
+    solution: Sequence[Sequence[int]] | None = None,
+) -> str:
+    """Render a standalone English puzzle or a separately labeled solution card."""
     from html import escape
 
-    offset, step = 48, 54
+    if solution is not None and not validate_solution(solution, lines):
+        raise ValueError("Cannot render an invalid solution")
+    left, top, step = 72, 88, 64
 
     def point(cell: int) -> tuple[int, int]:
-        return offset + (cell % 9) * step + step // 2, offset + (cell // 9) * step + step // 2
+        return left + (cell % 9) * step + step // 2, top + (cell // 9) * step + step // 2
 
-    parts = ['<svg xmlns="http://www.w3.org/2000/svg" width="630" height="700" viewBox="0 0 630 700">',
-             '<rect width="630" height="700" fill="white"/>',
-             f'<text x="315" y="28" text-anchor="middle" font-family="sans-serif" font-size="22">{escape(title)}</text>']
+    heading = title + (" - Solution" if solution is not None else "")
+    parts = ['<svg xmlns="http://www.w3.org/2000/svg" width="720" height="860" viewBox="0 0 720 860">',
+             f'<title>{escape(heading)}</title>',
+             '<rect width="720" height="860" fill="white"/>',
+             f'<text x="360" y="38" text-anchor="middle" font-family="sans-serif" font-size="27" fill="#172433">{escape(heading)}</text>',
+             '<text x="360" y="64" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#536170">Connected-even Sudoku</text>']
+    if solution is not None:
+        for r, row in enumerate(solution):
+            for c, digit in enumerate(row):
+                if digit % 2 == 0:
+                    parts.append(f'<rect class="even-cell" x="{left + c * step}" y="{top + r * step}" width="{step}" height="{step}" fill="#e8f0f6"/>')
     for i in range(10):
         width = 3 if i % 3 == 0 else 1
-        at = offset + step * i
-        parts.append(f'<path d="M {offset} {at} H {offset + 9 * step} M {at} {offset} V {offset + 9 * step}" stroke="#333" stroke-width="{width}"/>')
+        x, y = left + step * i, top + step * i
+        parts.append(f'<path d="M {left} {y} H {left + 9 * step} M {x} {top} V {top + 9 * step}" stroke="#333" stroke-width="{width}"/>')
     for line in lines:
         color = "#c4ccd4" if line.kind == "thermometer" else "#79b986"
         points = " ".join(f"{x},{y}" for x, y in map(point, line.cells))
@@ -316,17 +329,25 @@ def render_svg(lines: Sequence[Line], title: str = "Even Island") -> str:
         if line.kind == "thermometer":
             x, y = point(line.cells[0])
             parts.append(f'<circle cx="{x}" cy="{y}" r="18" fill="{color}"/>')
+    if solution is not None:
+        for r, row in enumerate(solution):
+            for c, digit in enumerate(row):
+                x, y = point(r * 9 + c)
+                parts.append(f'<text class="digit" x="{x - 8}" y="{y + 10}" font-family="Helvetica" font-size="29" fill="#172433">{digit}</text>')
     rules = ["Place 1-9 once in every row, column and 3x3 box.",
-             "All even digits form one island connected through cell sides.",
-             "Digits strictly increase from each thermometer bulb to its tip."]
+             "All cells containing 2, 4, 6 or 8 form one side-connected island."]
+    if any(line.kind == "thermometer" for line in lines):
+        rules.append("Digits strictly increase from each thermometer bulb to its tip.")
     if any(line.kind == "whisper" for line in lines):
         differences = {line.difference for line in lines if line.kind == "whisper"}
         if len(differences) != 1:
             raise ValueError("SVG rendering requires a single common whisper difference")
         rules.append(f"On green lines, adjacent digits differ by at least {differences.pop()}.")
     for i, rule in enumerate(rules):
-        parts.append(f'<text x="48" y="{576 + 24 * i}" font-family="sans-serif" font-size="14">{escape(rule)}</text>')
-    parts.append('<text x="48" y="676" font-family="sans-serif" font-size="12" fill="#555">No given digits. Diagonal contact does not connect even cells.</text>')
+        parts.append(f'<text x="72" y="{704 + 24 * i}" font-family="sans-serif" font-size="15" fill="#172433">{escape(rule)}</text>')
+    note = "Solution card. Shaded cells contain even digits." if solution is not None else "No given digits. Diagonal contact never joins even cells."
+    parts.append('<text x="72" y="810" font-family="sans-serif" font-size="13" fill="#536170">Thermometer segments may run diagonally.</text>')
+    parts.append(f'<text x="72" y="834" font-family="sans-serif" font-size="13" fill="#536170">{note}</text>')
     return "\n".join(parts + ["</svg>", ""])
 
 

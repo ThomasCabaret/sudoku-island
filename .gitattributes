@@ -6,3 +6,5 @@
 *.tex text eol=lf
 *.json text eol=lf
 *.pdf binary
+*.svg text eol=lf
+*.png binary

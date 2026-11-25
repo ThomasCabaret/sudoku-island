@@ -5,6 +5,7 @@ import io
 import itertools
 import json
 from pathlib import Path
+import random
 import tempfile
 import unittest
 
@@ -13,6 +14,8 @@ from island_puzzles import (
     load_puzzle, main, render_svg, validate_solution, verify,
 )
 from sudoku_island import symmetry_orbit
+from constructions.build import build, check_png
+from constructions.search import _cover, construct
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -56,7 +59,7 @@ class DomainSearchTests(unittest.TestCase):
 class PuzzleTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.data, cls.lines = load_puzzle(ROOT / "puzzles" / "even_island.json")
+        cls.data, cls.lines = load_puzzle(ROOT / "constructions" / "even_island_01" / "puzzle.json")
 
     def test_unique_across_all_eight_orientations(self):
         result = verify(self.lines)
@@ -134,9 +137,55 @@ class PuzzleTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "result.json"
             with contextlib.redirect_stdout(io.StringIO()):
-                code = main(["verify", str(ROOT / "puzzles" / "even_island.json"), "--json", str(path)])
+                code = main(["verify", str(ROOT / "constructions" / "even_island_01" / "puzzle.json"), "--json", str(path)])
             self.assertEqual(code, 0)
             self.assertEqual(json.loads(path.read_text())["status"], "UNIQUE")
+
+
+class ConstructionTests(unittest.TestCase):
+    def test_bounded_cover_against_brute_force(self):
+        rng = random.Random(12)
+        count = 5
+        for _ in range(60):
+            conflicts = [1 << i for i in range(count)]
+            for i in range(count):
+                for j in range(i):
+                    if rng.random() < 0.2:
+                        conflicts[i] |= 1 << j
+                        conflicts[j] |= 1 << i
+            requirements = [rng.randrange(1, 1 << count) for _ in range(rng.randrange(1, 6))]
+            budget = rng.randrange(1, 4)
+            feasible = []
+            for mask in range(1 << count):
+                chosen = [i for i in range(count) if mask >> i & 1]
+                if len(chosen) <= budget and all(mask & req for req in requirements) and all(
+                    not (conflicts[i] & mask & ~(1 << i)) for i in chosen
+                ):
+                    feasible.append(mask)
+            result = _cover(requirements, conflicts, [4] * count, budget, lambda: None)
+            self.assertEqual(result is not None, bool(feasible))
+            if result is not None:
+                self.assertIn(sum(1 << i for i in result), feasible)
+
+    def test_search_limits_do_not_claim_impossibility(self):
+        proposal = ROOT / "constructions" / "even_island_01"
+        grid = json.loads((proposal / "solution.json").read_text())["grid"]
+        result = construct(grid, timeout=1e-12)
+        self.assertEqual(result.status, "UNKNOWN")
+        self.assertEqual(result.lines, ())
+
+    def test_catalogue_sources_and_pngs_are_current(self):
+        with contextlib.redirect_stdout(io.StringIO()):
+            build(ROOT / "constructions" / "even_island_01", check=True)
+        proposal = ROOT / "constructions" / "even_island_01"
+        svg = (proposal / "puzzle.svg").read_bytes()
+        with self.assertRaises(ValueError):
+            check_png(proposal / "puzzle.png", svg + b"stale")
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "truncated.png"
+            path.write_bytes((proposal / "puzzle.png").read_bytes()[:-16])
+            with self.assertRaises(ValueError):
+                check_png(path, svg)
 
 
 if __name__ == "__main__":

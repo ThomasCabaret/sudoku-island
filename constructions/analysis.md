@@ -59,7 +59,7 @@ symmetry. Other asymmetric clue types could also work.
 **Even Island** uses just four thermometers, on **20 distinct cells**. Their
 paths neither overlap nor cross. There are no printed digits or parity marks.
 
-![Blank puzzle](../puzzles/even_island.svg)
+![Blank puzzle](even_island_01/puzzle.png)
 
 Rules:
 
@@ -80,8 +80,9 @@ Coordinates below are one-based; the first cell is the bulb:
 | C | r3c3, r2c4, r3c5, r2c5, r2c6, r3c6 | 6 |
 | D | r5c8, r5c9, r4c8, r3c9 | 4 |
 
-The [printable PDF](../puzzles/even_island.pdf) and
-[machine-readable puzzle](../puzzles/even_island.json) contain no solution.
+The [standalone PNG](even_island_01/puzzle.png), [printable PDF](even_island_01/puzzle.pdf)
+and [machine-readable puzzle](even_island_01/puzzle.json) contain no solution.
+The separate [solution card](even_island_01/solution.png) is a spoiler.
 
 ## What has been verified
 
@@ -137,15 +138,15 @@ Python 3.10+, standard library only:
 
 ```sh
 python island_puzzles.py analyze --json output/freedom.json
-python island_puzzles.py verify puzzles/even_island.json
-python island_puzzles.py verify puzzles/even_island.json --audit --json output/audit.json
-python island_puzzles.py verify puzzles/even_island.json --without-island
-python island_puzzles.py render puzzles/even_island.json output/even_island.svg
+python island_puzzles.py verify constructions/even_island_01/puzzle.json
+python island_puzzles.py verify constructions/even_island_01/puzzle.json --audit --json output/audit.json
+python island_puzzles.py verify constructions/even_island_01/puzzle.json --without-island
+python -m constructions.build --check
 python -m unittest discover -s tests -v
 ```
 
 Create `output/` first if saving reports there. A compact recorded analysis is
-in [puzzle-analysis.json](puzzle-analysis.json); each witness is an 81-character
+in [verification.json](even_island_01/verification.json); each witness is an 81-character
 digit string in row-major order. Each audit MULTIPLE result includes two
 explicit witnesses. Only an exhausted search containing exactly one witness can
 return UNIQUE. An interrupted search with fewer than two witnesses is UNKNOWN.
@@ -153,7 +154,7 @@ The two-solution cutoff suffices for the necessity checks; it does not count
 all solutions of those weakened puzzles.
 
 The eight-orientation reduction relies on the abstract theorem documented in
-[completeness.tex](completeness.tex) and its recorded exhaustive computation.
+[completeness.tex](../docs/completeness.tex) and its recorded exhaustive computation.
 The new verifier does not independently reprove that theorem on every run.
 The raw connectivity checker used for returned grids does not assume a shape.
 
@@ -177,7 +178,10 @@ The prototype was found by counterexample-guided clue selection:
 The covering problem uses accumulated competitors only; it cannot by itself
 certify Sudoku uniqueness. That certificate always comes from the subsequent
 exhaustive Sudoku check. This example is verified and reproducible from its
-JSON; the exploratory construction search is not exposed as a supported CLI.
+JSON. The cleaned construction search is now available as
+`python -m constructions.search --output output/candidate.json`. It may select
+a different locally irreducible candidate; the published design is specified
+by its explicit cell paths. See the [catalogue instructions](README.md).
 
 Useful next targets are three-line mixed thermometer/whisper puzzles, fewer
 turns per line, approximate rotational balance of the artwork, and a human
