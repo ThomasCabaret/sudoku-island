@@ -67,6 +67,11 @@ mask or expected solution. The [results table](benchmarks/report.md) records
 first-solution effort, uniqueness status, search counters and peak process
 memory, with explicit timeouts rather than inferred difficulty ratings.
 
+For unattended searches, `start_campaign.bat` launches both SAT connectivity
+encodings on all four statements, with separate 30-minute first-solution and
+uniqueness budgets. Open **`campaign_status.bat`** for live progress; closing
+the viewer leaves the campaign running. See the [campaign instructions](benchmarks/README.md#offline-sat-campaign).
+
 ```sh
 python island_puzzles.py analyze
 python island_puzzles.py verify constructions/even_island_01/puzzle.json --audit

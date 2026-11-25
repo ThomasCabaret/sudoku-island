@@ -143,7 +143,7 @@ def _enumerate(
     lines: Sequence[Line],
     accept: Callable[[tuple[int, ...]], None],
     stats: dict[str, int],
-    deadline: float | None,
+    deadline: float | Callable[[], float | None] | None,
     domain_filter: Callable[[list[int]], bool] | None = None,
 ) -> None:
     """Exhaustive domain search; an optional sound filter can narrow domains.
@@ -159,7 +159,8 @@ def _enumerate(
     renbans = [line.cells for line in lines if line.kind == "renban"]
 
     def visit(domains: list[int]) -> None:
-        if deadline is not None and perf_counter() >= deadline:
+        current_deadline = deadline() if callable(deadline) else deadline
+        if current_deadline is not None and perf_counter() >= current_deadline:
             raise TimeoutError("Time limit reached before enumeration finished")
         stats["states"] += 1
         while True:

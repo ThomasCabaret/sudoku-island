@@ -3,6 +3,10 @@
 [Measured results and comparison table](report.md) · [Raw JSON](results.json) ·
 [Per-trial CSV](results.csv)
 
+For longer unattended searches, see the [offline SAT campaign](#offline-sat-campaign).
+The 30-second report is a historical measurement; it is not overwritten by a
+campaign or silently updated to measurements from a newer solver version.
+
 The purpose is to measure automatic solving effort when the **printed statement
 is the only mathematical input**. The fast construction verifier is unsuitable
 for this question: it imports the independently proved eight island masks.
@@ -100,3 +104,78 @@ conflict counters accumulate across incremental calls; `time` describes the
 last check, and memory fields describe engine allocations. Use the worker's
 `elapsed_seconds`, `cpu_seconds` and `peak_process_mib` for total time and
 whole-process peak memory.
+
+## Offline SAT campaign
+
+From the repository root, double-click **`start_campaign.bat`** to launch a
+detached controller. **`campaign_status.bat`** opens an automatically refreshing
+table; closing that viewer leaves the calculation running. **`stop_campaign.bat`**
+requests cancellation of this campaign's workers. No unrelated Python process
+is terminated.
+
+Defaults: four published puzzles, two SAT models, two simultaneous workers,
+one solver thread each. Every job gets **30 minutes to find its first solution**,
+then a **new 30-minute budget** for excluding a second solution. Solved jobs
+finish early. With eight jobs and two workers, the worst-case allowance is
+about four hours, plus setup. CPU contention means these are campaign timings,
+not directly comparable to the sequential 30-second benchmark.
+
+The two recorded times are:
+
+- `first_solution_seconds`: setup and search until the first validated grid;
+- `uniqueness_search_seconds`: additional time after that grid, continuing the
+  same solver with its learnt clauses and blocking the entire digit assignment.
+  It is a completed uniqueness proof only if the final status is **UNIQUE**.
+  MULTIPLE means a second different grid was found; UNKNOWN means interruption.
+
+The original `sat-cuts` model learns clauses from disconnected complete models.
+The new **`sat-tree`** model instead includes connectivity in the initial SAT
+formula. Each selected cell has an unsigned six-bit rank at most 35. The root
+has rank zero; every other selected cell has an orthogonally adjacent selected
+neighbor of strictly smaller rank. The root is the first even cell in row one,
+which necessarily contains four evens. This chooses auxiliary variables without
+restricting the grid's geometric orientation. In either model, only the
+printed clues are input; no reference mask or expected solution is provided.
+
+Why the tree encoding is exact: descending ranks force every even cell to
+reach the same root, so the selected set is connected. Conversely, in any
+connected 36-cell set, shortest-path distances from that root are at most 35
+and satisfy all these constraints. Cycles in the island are allowed. Blocking
+a solution blocks its **81 digits**, not just one assignment of auxiliary ranks.
+Tests compare the encoding with flood fill for all 512 selections on a 3x3 grid,
+then check full Sudoku fixtures with the theorem entry points disabled.
+
+Progress is saved under **`output/sat-campaign/`**:
+
+- `status.md` and `summary.csv`: live comparison table, refreshed every two seconds;
+- `campaign.json`: controller heartbeat, worker PIDs, settings and input/source hashes;
+- per-job `*.progress.json`, `*.result.json`, and `*.log`: witnesses, phase times,
+  final statuses, search counters and diagnostics;
+- `snapshot/`: frozen solver source and the four statements, with no solution
+  files or theorem-result files. Queued jobs use this snapshot even if the
+  working repository changes during the campaign.
+
+The controller runs independently of the launching terminal and prevents
+automatic Windows sleep while it is active, without keeping the display on or
+changing persistent power settings. Explicit sleep, shutdown or reboot still
+interrupt computation. Saved progress is an audit snapshot, **not a checkpoint
+of Z3's learnt clauses**. Starting again resumes the queue and retains completed
+jobs, but interrupted jobs restart from scratch. Existing directories retain
+their original settings and frozen source; use another directory for a new run.
+
+Native SAT calls can last many minutes. Elapsed times keep advancing in the
+viewer while counters and memory show the latest saved snapshot. This is not
+a percentage-complete estimate. Once all jobs finish, the state becomes
+FINISHED (or FINISHED_WITH_ERRORS if a worker failed). These searches do not
+export independently checkable UNSAT proof certificates; UNIQUE is the SAT
+engine's exhaustive UNSAT result after blocking the first independently
+validated digit grid, under the documented exact encoding.
+
+```sh
+python -m benchmarks.campaign start
+python -m benchmarks.campaign status
+python -m benchmarks.campaign status --watch
+python -m benchmarks.campaign stop
+# New run with longer budgets, leaving the original run untouched:
+python -m benchmarks.campaign start --solution-seconds 3600 --proof-seconds 3600 --output output/sat-campaign-longer
+```

@@ -12,6 +12,7 @@ import math
 from pathlib import Path
 import sys
 from time import perf_counter, process_time
+from typing import Callable
 
 from island_puzzles import (
     ALL_DIGITS, EVEN, ODD, UNITS, _enumerate, load_parity, load_puzzle,
@@ -19,6 +20,8 @@ from island_puzzles import (
 )
 
 METHODS = ("csp-leaf", "csp-graph", "sat-cuts")
+SAT_METHODS = ("sat-cuts", "sat-tree")
+ALL_METHODS = METHODS + ("sat-tree",)
 NEIGHBORS = tuple(tuple(j for j in range(81)
                         if abs(i // 9 - j // 9) + abs(i % 9 - j % 9) == 1)
                   for i in range(81))
@@ -142,14 +145,41 @@ class EnoughSolutions(Exception):
     pass
 
 
-def solve(path: Path, method: str, seconds: float) -> dict:
+def add_tree_connectivity(engine, even, neighbors, max_selected: int, root_candidates) -> None:
+    """Encode a rooted spanning tree using strictly decreasing unsigned ranks.
+
+    The selected set must be nonempty, have at most max_selected vertices and
+    meet root_candidates. The first selected candidate is its canonical root.
+    For Sudoku, every first-row cell is a candidate: that row has four evens.
+    This chooses auxiliary variables, not a preferred geometric orientation.
+    """
+    import z3
+
+    candidates = tuple(root_candidates)
+    engine.add(z3.Or([even[cell] for cell in candidates]))
+    roots = {cell: z3.And(even[cell], *[z3.Not(even[j]) for j in candidates[:index]])
+             for index, cell in enumerate(candidates)}
+    rank = [z3.BitVec(f"rank_{cell}", max(1, (max_selected-1).bit_length()))
+            for cell in range(len(even))]
+    for cell in range(len(even)):
+        root = roots.get(cell, z3.BoolVal(False))
+        engine.add(z3.Implies(even[cell], z3.ULE(rank[cell], max_selected-1)))
+        engine.add(z3.Implies(root, rank[cell] == 0))
+        engine.add(z3.Implies(z3.And(even[cell], z3.Not(root)), z3.Or([
+            z3.And(even[j], z3.ULT(rank[j], rank[cell])) for j in neighbors[cell]])))
+
+
+def solve(path: Path, method: str, seconds: float, *, proof_seconds: float | None = None,
+          progress: Callable[[dict], None] | None = None) -> dict:
     """Find a witness, then continue the same search until unique/multiple/timeout.
 
     The only input file opened is puzzle.json. An expected solution is never
     passed here. All witness grids are checked from the rules before returning.
     """
-    if method not in METHODS or not math.isfinite(seconds) or seconds <= 0:
+    if method not in ALL_METHODS or not math.isfinite(seconds) or seconds <= 0:
         raise ValueError("Expected a known method and a positive finite time budget")
+    if proof_seconds is not None and (not math.isfinite(proof_seconds) or proof_seconds <= 0):
+        raise ValueError("The separate uniqueness budget must be positive and finite")
     data, lines = load_puzzle(path)
     parity = load_parity(data)
     started, cpu_started = perf_counter(), process_time()
@@ -159,9 +189,29 @@ def solve(path: Path, method: str, seconds: float) -> dict:
     first_seconds = first_states = None
     exhaustive, reason = False, ""
     engine_version = None
+    last_progress = -float("inf")
+
+    def snapshot(status: str) -> dict:
+        elapsed = perf_counter()-started
+        return {"method": method, "title": data["title"], "status": status,
+                "exhaustive": exhaustive, "reason": reason,
+                "phase": "find_solution" if first_seconds is None else "prove_uniqueness",
+                "budget_seconds": seconds, "proof_budget_seconds": proof_seconds,
+                "elapsed_seconds": elapsed, "cpu_seconds": process_time()-cpu_started,
+                "first_solution_seconds": first_seconds, "first_solution_states": first_states,
+                "uniqueness_search_seconds": None if first_seconds is None else elapsed-first_seconds,
+                "solutions": solutions.copy(), "metrics": stats.copy(),
+                "peak_process_mib": peak_memory_mib(), "engine_version": engine_version}
+
+    def publish(force: bool = False) -> None:
+        nonlocal last_progress
+        now = perf_counter()
+        if progress is not None and (force or now-last_progress >= 5):
+            progress(snapshot("RUNNING"))
+            last_progress = now
 
     def accept(digits: tuple[int, ...]) -> None:
-        nonlocal first_seconds, first_states
+        nonlocal first_seconds, first_states, deadline
         grid = tuple(tuple(digits[9*r:9*r+9]) for r in range(9))
         if not validate_solution(grid, lines, parity=parity):
             raise RuntimeError("Independent rule validator rejected a witness")
@@ -172,9 +222,13 @@ def solve(path: Path, method: str, seconds: float) -> dict:
         if first_seconds is None:
             first_seconds = perf_counter() - started
             first_states = stats["states"] if method.startswith("csp") else None
+            if proof_seconds is not None:
+                deadline = perf_counter()+proof_seconds
+            publish(force=True)
         if len(solutions) == 2:
             raise EnoughSolutions
 
+    publish(force=True)
     try:
         if method.startswith("csp"):
             domains = [ALL_DIGITS] * 81
@@ -190,7 +244,7 @@ def solve(path: Path, method: str, seconds: float) -> dict:
                     stats["rejected_complete_grids"] += 1
 
             _enumerate(domains, tuple((unit, ALL_DIGITS) for unit in UNITS),
-                       lines, leaf, stats, deadline,
+                       lines, leaf, stats, lambda: deadline,
                        (lambda d: connectivity_filter(d, stats)) if method == "csp-graph" else None)
             exhaustive = True
         else:
@@ -223,6 +277,8 @@ def solve(path: Path, method: str, seconds: float) -> dict:
                                      else abs(a-b) < line.difference)]
                 for a, b in pairs:
                     engine.add([z3.Or(z3.Not(x[a][da]), z3.Not(x[b][db])) for da, db in forbidden])
+            if method == "sat-tree":
+                add_tree_connectivity(engine, even, NEIGHBORS, 36, range(9))
             stats.update(sat_calls=0, connectivity_cuts=0)
             while True:
                 remaining = deadline - perf_counter()
@@ -230,6 +286,7 @@ def solve(path: Path, method: str, seconds: float) -> dict:
                     raise TimeoutError
                 engine.set(timeout=max(1, int(remaining * 1000)))
                 stats["sat_calls"] += 1
+                publish()
                 answer = engine.check()
                 # Z3 counters are cumulative across incremental checks.
                 stats["engine_statistics"] = {key: value for key, value in engine.statistics()}
@@ -248,6 +305,8 @@ def solve(path: Path, method: str, seconds: float) -> dict:
                     accept(digits)
                     engine.add(z3.Or([z3.Not(x[cell][d-1]) for cell, d in enumerate(digits)]))
                 else:
+                    if method == "sat-tree":
+                        raise RuntimeError("Spanning-tree encoding admitted a disconnected model")
                     stats["rejected_complete_grids"] += 1
                     for part in parts:
                         boundary = set().union(*(set(NEIGHBORS[cell]) for cell in part)) - part
@@ -256,28 +315,29 @@ def solve(path: Path, method: str, seconds: float) -> dict:
                         engine.add(z3.Or([z3.Not(even[cell]) for cell in sorted(part)]
                                          + [even[cell] for cell in sorted(boundary)]))
                         stats["connectivity_cuts"] += 1
+                publish()
     except EnoughSolutions:
         reason = "Two independently validated solutions found."
     except TimeoutError:
         reason = "Wall-time budget exhausted."
     status = ("MULTIPLE" if len(solutions) >= 2 else "UNKNOWN" if not exhaustive
               else "UNIQUE" if solutions else "UNSAT")
-    return {"method": method, "title": data["title"], "status": status,
-            "exhaustive": exhaustive, "reason": reason or "Search exhausted.",
-            "budget_seconds": seconds, "elapsed_seconds": perf_counter()-started,
-            "cpu_seconds": process_time()-cpu_started, "first_solution_seconds": first_seconds,
-            "first_solution_states": first_states, "solutions": solutions, "metrics": stats,
-            "peak_process_mib": peak_memory_mib(), "engine_version": engine_version}
+    reason = reason or "Search exhausted."
+    result = snapshot(status)
+    if progress is not None:
+        progress(result)
+    return result
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("puzzle", type=Path)
-    parser.add_argument("--method", choices=METHODS, required=True)
+    parser.add_argument("--method", choices=ALL_METHODS, required=True)
     parser.add_argument("--seconds", type=float, default=15)
+    parser.add_argument("--proof-seconds", type=float)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    result = solve(args.puzzle, args.method, args.seconds)
+    result = solve(args.puzzle, args.method, args.seconds, proof_seconds=args.proof_seconds)
     args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
 
 

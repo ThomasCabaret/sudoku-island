@@ -12,7 +12,7 @@ from unittest import mock
 
 from benchmarks.run import render_report
 from benchmarks.solve import (
-    METHODS, NEIGHBORS, components, connectivity_filter, required_bridges, solve,
+    METHODS, NEIGHBORS, add_tree_connectivity, components, connectivity_filter, required_bridges, solve,
 )
 from island_puzzles import ALL_DIGITS, EVEN, ODD
 
@@ -32,6 +32,21 @@ def connected(cells, neighbors):
 
 
 class ConnectivityTests(unittest.TestCase):
+    @unittest.skipUnless(importlib.util.find_spec("z3"), "Optional Z3 engine is not installed")
+    def test_spanning_tree_encoding_against_every_three_by_three_set(self):
+        import z3
+        neighbors = tuple(tuple(j for j in range(9)
+                                if abs(i//3-j//3)+abs(i%3-j%3) == 1) for i in range(9))
+        engine = z3.SolverFor("QF_FD")
+        even = [z3.Bool(f"selected_{i}") for i in range(9)]
+        add_tree_connectivity(engine, even, neighbors, 9, range(9))
+        for bits in range(512):
+            selected = {i for i in range(9) if bits >> i & 1}
+            engine.push()
+            engine.add([value if i in selected else z3.Not(value) for i, value in enumerate(even)])
+            self.assertEqual(engine.check() == z3.sat, connected(selected, neighbors))
+            engine.pop()
+
     def test_articulation_for_all_ternary_three_by_three_graphs(self):
         neighbors = tuple(tuple(j for j in range(9)
                                 if abs(i//3-j//3)+abs(i%3-j%3) == 1) for i in range(9))
@@ -99,7 +114,30 @@ class RuleOnlySolverTests(unittest.TestCase):
                               for r, row in enumerate(cls.grid) for c, digit in enumerate(row)]
 
     def available_methods(self):
-        return [m for m in METHODS if m != "sat-cuts" or importlib.util.find_spec("z3")]
+        return [m for m in (*METHODS, "sat-tree")
+                if not m.startswith("sat-") or importlib.util.find_spec("z3")]
+
+    def test_progress_and_separate_uniqueness_budget(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "puzzle.json"
+            path.write_text(json.dumps(self.data), encoding="utf-8")
+            for method in self.available_methods():
+                clock = [0.0]
+                events = []
+
+                def progress(event):
+                    events.append(event)
+                    if event["first_solution_seconds"] is not None:
+                        clock[0] = 2.0  # Past the original 1 s budget, within the new 10 s budget.
+
+                with mock.patch("benchmarks.solve.perf_counter", side_effect=lambda: clock[0]), \
+                     mock.patch("island_puzzles.perf_counter", side_effect=lambda: clock[0]):
+                    result = solve(path, method, 1, proof_seconds=10, progress=progress)
+                self.assertEqual(result["status"], "UNIQUE")
+                self.assertEqual(result["uniqueness_search_seconds"], 2)
+                self.assertEqual(events[0]["phase"], "find_solution")
+                self.assertEqual(events[-1]["status"], "UNIQUE")
+                self.assertTrue(any(e["status"] == "RUNNING" and e["phase"] == "prove_uniqueness" for e in events))
 
     def test_unique_multiple_and_unsat_without_theorem_entry_points(self):
         expected = "".join(str(d) for row in self.grid for d in row)
